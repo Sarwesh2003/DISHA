@@ -5,4 +5,4 @@ We can add public, private, government places.
 Also, user can review a place.
 <h3>Any contribution will be appreciated.</h3>
 <h1>Thank You</h1>
-![plot](./assets/1.jpeg)
+![Output](https://github.com/Sarwesh2003/DISHA/blob/master/assets/1.jpeg)
