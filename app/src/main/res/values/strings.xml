@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">DISHA</string>
+    <string-array name="bussiness_type">
+        <item>Private</item>
+        <item>Government</item>
+    </string-array>
+
+    <string-array name="infrastructure_type">
+        <item>Private Business</item>
+        <item>Government Office</item>
+        <item>Public Place(Parks etc.)</item>
+        <item>Educational Institute</item>
+        <item>Travel Stations</item>
+    </string-array>
+
+    <string-array name="facilities">
+        <item>Available</item>
+        <item>Not Available</item>
+    </string-array>
+    <string-array name="facility_lift">
+        <item>Available</item>
+        <item>Not Needed</item>
+        <item>Not Available</item>
+    </string-array>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>

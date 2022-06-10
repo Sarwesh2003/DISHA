@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "489204231107",
+    "project_id": "disha-61129",
+    "storage_bucket": "disha-61129.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489204231107:android:220720156ec249f6902b76",
+        "android_client_info": {
+          "package_name": "com.example.disha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489204231107-6ristmsr2kfsd18iofije6fdjb4oik0t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8WokYFKRuFu1utp7WoC-Yqx2MKBGvzDI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "489204231107-6ristmsr2kfsd18iofije6fdjb4oik0t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
