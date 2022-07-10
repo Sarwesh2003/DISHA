@@ -24,7 +24,9 @@ public class DAOPlaceData {
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
     }
-
+    public StorageReference getStorageReference(){
+        return storageReference;
+    }
     public DatabaseReference getReference(){
         return databaseReference;
     }

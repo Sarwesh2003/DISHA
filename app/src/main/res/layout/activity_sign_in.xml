@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <TextView
+        android:id="@+id/welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Welcome to\nDisha"
+        android:layout_alignParentTop="true"
+        android:textAlignment="center"
+        android:textAppearance="@style/TextAppearance.AppCompat.Display3"
+        android:textColor="@color/colorPrimary" />
+
+    <LinearLayout
+        android:id="@+id/signInLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:layout_margin="8dp"
+        android:padding="8dp">
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/signInGoogle"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign in with Google"
+            android:drawableStart="@drawable/google"
+            android:elevation="16dp"
+            android:layout_margin="8dp"
+            android:padding="8dp"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/signInEmail"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign in with Email"
+            android:drawableStart="@drawable/email"
+            android:elevation="16dp"
+            android:layout_margin="8dp"
+            android:padding="8dp"/>
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/signInPhone"
+            android:background="@color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign in with Phone"
+            android:drawableStart="@drawable/phone"
+            android:layout_margin="8dp"
+            android:padding="8dp"
+            android:elevation="16dp"/>
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/signInTwitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sign in with Twitter"
+            android:drawableStart="@drawable/twitter"
+            android:elevation="16dp"
+            android:background="@color/white"
+            android:layout_margin="8dp"
+            android:padding="8dp"/>
+    </LinearLayout>
+
+
+</RelativeLayout>

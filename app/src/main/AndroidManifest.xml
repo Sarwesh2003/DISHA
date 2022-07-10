@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.disha">
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -17,22 +18,18 @@
         <activity
             android:name=".Reviews.ActivityReview"
             android:exported="false" />
-
         <activity
             android:name=".ViewDetails.ViewDetails"
             android:exported="false" />
         <activity
             android:name=".AddPlace.PlaceInfo"
             android:exported="false" />
-
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyD-rXjJAJD_6FcgmbC1_enzDKjYqEgwsio" />
-
+            android:value="@string/place_api_key" />
         <activity
             android:name=".MainActivity"
-            android:exported="false"/>
-
+            android:exported="false" />
         <activity
             android:name=".Permission"
             android:exported="true">

@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "489204231107",
+    "firebase_url": "https://disha-61129-default-rtdb.firebaseio.com",
     "project_id": "disha-61129",
     "storage_bucket": "disha-61129.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "489204231107-ktjboa1ivlnl8o9nvandrmr71ap7kal5.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.disha",
+            "certificate_hash": "bfb486ec3a4cb85ac0d50820e9f8942a6ce88e45"
+          }
+        },
         {
           "client_id": "489204231107-6ristmsr2kfsd18iofije6fdjb4oik0t.apps.googleusercontent.com",
           "client_type": 3
