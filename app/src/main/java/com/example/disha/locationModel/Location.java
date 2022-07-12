@@ -48,6 +48,8 @@ public class Location {
     Marker marker, marker2;
     LocationCallback callback;
     GoogleMap mGoogleMap;
+    private LatLng myLocation;
+
     public Location(Context context, int id) {
         this.context = context;
         supportMapFragment = (SupportMapFragment) ((FragmentActivity) context).getSupportFragmentManager().findFragmentById(id);
@@ -85,8 +87,8 @@ public class Location {
         Task<android.location.Location> current = client.getLastLocation();
         current.addOnSuccessListener(location -> supportMapFragment.getMapAsync(googleMap -> {
             mGoogleMap = googleMap;
-            LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            AddMarkerToPos(latLng,true);
+            myLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            AddMarkerToPos(myLocation,true);
         }));
         //KeepUpdatingLocation();
     }
@@ -109,8 +111,10 @@ public class Location {
         }
         else{
             options = new MarkerOptions().position(latLng)
-                    .title("Saved Location");
+                    .title("Happy Journey");
         }
+
+
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         marker = mGoogleMap.addMarker(options);
     }
@@ -207,6 +211,9 @@ public class Location {
         Canvas canvas = new Canvas(bitmap);
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+    public LatLng getMyLocation(){
+        return myLocation;
     }
 
 }

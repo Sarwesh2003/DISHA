@@ -53,27 +53,27 @@ public class BottomsheetShowData extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_bottomsheet_show_data, container, false);
-        sliderView = root.findViewById(R.id.slider);
-        btn_close = root.findViewById(R.id.close);
-        title = root.findViewById(R.id.viewTitle);
-        showDes = root.findViewById(R.id.abt);
-        showFacility = root.findViewById(R.id.facility);
-        showAdd = root.findViewById(R.id.addrs);
-        directions = root.findViewById(R.id.directions);
-        details = root.findViewById(R.id.details);
-        Initallize();
-        title.setText(placeData.getName());
-        btn_close.setOnClickListener(v->{
-            dismiss();
-        });
-
-        directions.setOnClickListener(v -> {
-            LatLng instance=placeData.getLatLng();
-            String uri = "geo:" + instance.latitude + ","
-                    +instance.longitude + "?q=" + instance.latitude
-                    + "," + instance.longitude;
-            startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)));
-        });
+//        sliderView = root.findViewById(R.id.slider);
+//        btn_close = root.findViewById(R.id.close);
+//        title = root.findViewById(R.id.viewTitle);
+//        showDes = root.findViewById(R.id.abt);
+//        showFacility = root.findViewById(R.id.facility);
+//        showAdd = root.findViewById(R.id.addrs);
+//        directions = root.findViewById(R.id.directions);
+//        details = root.findViewById(R.id.details);
+//        Initallize();
+//        title.setText(placeData.getName());
+//        btn_close.setOnClickListener(v->{
+//            dismiss();
+//        });
+//
+//        directions.setOnClickListener(v -> {
+//            LatLng instance=placeData.getLatLng();
+//            String uri = "geo:" + instance.latitude + ","
+//                    +instance.longitude + "?q=" + instance.latitude
+//                    + "," + instance.longitude;
+//            startActivity(new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri)));
+//        });
 //
 //        details.setOnClickListener(v -> {
 //            Intent startnew = new Intent(getActivity(), ViewDetails.class);

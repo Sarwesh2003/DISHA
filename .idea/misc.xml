@@ -38,17 +38,22 @@
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable-v24/ic_locationoff.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/appbar_back.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/back.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/border_bottom.xml" value="0.15" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/ic_close.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/ic_continue.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/ic_profile.xml" value="0.2712820512820513" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/layout_back.xml" value="0.2755208333333333" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/slider_back.xml" value="0.2755208333333333" />
+        <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/drawable/swipe_up_handle.xml" value="0.2712820512820513" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_main.xml" value="0.259375" />
+        <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_main_bt.xml" value="0.17980072463768115" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_permission.xml" value="0.259375" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_place_info.xml" value="0.259375" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_review.xml" value="0.259375" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_sign_in.xml" value="0.264" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/activity_view_details.xml" value="0.259375" />
+        <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/bottom_sheet_content.xml" value="0.13385416666666666" />
+        <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/fragment_bottomsheet_show_data.xml" value="0.17980072463768115" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/fragment_details.xml" value="0.259375" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/fragment_display_review.xml" value="0.259375" />
         <entry key="..\:/Users/sarwe/Desktop/Tutorial/Projects/DISHA/app/src/main/res/layout/fragment_list_locations.xml" value="0.259375" />

@@ -1,63 +1,59 @@
 package com.example.disha;
 
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.widget.SearchView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcel;
 import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+
 import com.example.disha.AddPlace.PlaceInfo;
-import com.example.disha.Reviews.ActivityReview;
-import com.example.disha.ViewDetails.BottomsheetShowData;
 import com.example.disha.AddPlace.data.DAOPlaceData;
-import com.example.disha.AddPlace.data.PlaceData;
+import com.example.disha.Reviews.ActivityReview;
 import com.example.disha.locationModel.Location;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AddressComponents;
+import com.google.android.libraries.places.api.model.OpeningHours;
+import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.PlusCode;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.appbar.MaterialToolbar;
+
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -69,7 +65,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.google.maps.android.SphericalUtil;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -78,7 +74,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
     Location location;
     FloatingActionButton  refresh;
     ProgressDialog progressDialog;
@@ -86,19 +82,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     EditText search;
     FirebaseUser user;
     DrawerLayout drawerLayout;
+    NavigationView navigationView;
+    TextView placeName, address, phone, description, distance;
     ActivityResultLauncher<Intent> profileImgIntent;
     private final ArrayList<String> suggestionsArray = new ArrayList<String>();
     private final ArrayList<String> dummyArray = new ArrayList<String>();
     private Bitmap profileImg;
     private Uri imgFile;
+    private BottomSheetBehavior bottomSheetBehavior;
+    public ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+
+                    if(result.getData()!=null){
+                        Place place = Autocomplete.getPlaceFromIntent(result.getData());
+                        ShowData(place);
+                    }
+                }else if(result.getResultCode() == AutocompleteActivity.RESULT_ERROR){
+                    Status status = Autocomplete.getStatusFromIntent(result.getData());
+                    Toast.makeText(getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_LONG).show();
+                }
+            });
+    private Place nashik;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Initializing Facebook Auth
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(getApplication());
+//        FacebookSdk.sdkInitialize(getApplicationContext());
+//        AppEventsLogger.activateApp(getApplication());
 
         //Getting User
         user = FirebaseAuth.getInstance().getCurrentUser();
@@ -110,7 +124,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //UI
         MaterialToolbar toolbar = findViewById(R.id.topAppBar);
         drawerLayout = findViewById(R.id.drawer_layout);
-        NavigationView navigationView = findViewById(R.id.navigation_view);
+        navigationView = findViewById(R.id.navigation_view);
         location = new Location(this, R.id.map_fragment);
         location.CheckPrerequisite();
         refresh = findViewById(R.id.recenter);
@@ -120,122 +134,165 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         //Getting Profile Image
         profileImg = drawableToBitmap(getDrawable(R.drawable.ic_profile));
 
-        boolean phone = checkPhone(user);
+//        boolean phone = checkPhone(user);
         new DownloadImageFromInternet()
             .execute(String.valueOf(user.getPhotoUrl()));
+        initComponent();
 
-//        profileImgIntent = registerForActivityResult(
-//                new ActivityResultContracts.StartActivityForResult(),
-//                new ActivityResultCallback<ActivityResult>() {
-//                    @Override
-//                    public void onActivityResult(ActivityResult result) {
-//                        if(result.getResultCode() == Activity.RESULT_OK){
-//                            imgFile = result.getData().getData();
-//                            if(imgFile != null){
-//                                if(phone){
-//                                    daoPlaceData.addImg(imgFile, "Users/"+user.getPhoneNumber()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                        @Override
-//                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                            Toast.makeText(getApplicationContext(), "Profile Photo Updated", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    }).addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Toast.makeText(getApplicationContext(), "Something went wrong. Try again.", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    });
-//                                }else{
-//                                    daoPlaceData.addImg(imgFile, "Users/"+user.getDisplayName()).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-//                                        @Override
-//                                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                                            Toast.makeText(getApplicationContext(), "Profile Photo Updated", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    }).addOnFailureListener(new OnFailureListener() {
-//                                        @Override
-//                                        public void onFailure(@NonNull Exception e) {
-//                                            Toast.makeText(getApplicationContext(), "Something went wrong. Try again.", Toast.LENGTH_SHORT).show();
-//                                        }
-//                                    });
-//                                }
-//                                if (phone) {
-//                                    getImageURI(user.getPhoneNumber());
-//                                } else {
-//                                    getImageURI(user.getDisplayName());
-//                                }
-////                                Toast.makeText(getApplicationContext(),String.valueOf(imguri), Toast.LENGTH_SHORT).show();
-//                            }
-//                        }else{
-//                            Toast.makeText(getApplicationContext(), "Something went wrong", Toast.LENGTH_SHORT).show();
-//                        }
-//
-//                    }
-//                });
-
-        FirebaseUser finalUser = user;
-
-        //Setting User Details and opening navigation drawer
-        toolbar.setNavigationOnClickListener(v -> {
-            drawerLayout.openDrawer(GravityCompat.START);
-            TextView user_name = navigationView.findViewById(R.id.user_name);
-            TextView gmail = navigationView.findViewById(R.id.gmail);
-            CircleImageView img = navigationView.findViewById(R.id.profilepic);
-            if(finalUser != null) {
-                String name = finalUser.getDisplayName();
-                String email = finalUser.getEmail();
-                String imgUri = String.valueOf(user.getPhotoUrl());
-                if(name == null || name.isEmpty()){
-                    user_name.setText(finalUser.getPhoneNumber());
-                }else{
-                    user_name.setText(name);
-                }
-
-                if(email == null ||email.isEmpty()){
-                    gmail.setText("Gmail not found");
-                }else{
-                    gmail.setText(finalUser.getEmail());
-                }
-                if(imgUri.contains("null") || imgUri.isEmpty()){
-//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
-                    img.setImageBitmap(profileImg);
-
-                }else{
-//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
-                    img.setImageBitmap(profileImg);
-                }
-            }
-        });
-
-
-        navigationView.setNavigationItemSelectedListener(this);
-
-        ActivityResultLauncher<Intent> someActivityResultLauncher = registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    if (result.getResultCode() == Activity.RESULT_OK) {
-
-                        if(result.getData()!=null){
-                            Place place = Autocomplete.getPlaceFromIntent(result.getData());
-                            ShowData(place);
-                        }
-                    }else if(result.getResultCode() == AutocompleteActivity.RESULT_ERROR){
-                        Status status = Autocomplete.getStatusFromIntent(result.getData());
-                        Toast.makeText(getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_LONG).show();
-                    }
-                });
-        search.setOnClickListener(new View.OnClickListener() {
+        nashik = new Place() {
+            @Nullable
             @Override
-            public void onClick(View v) {
-                List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG,
-                        Place.Field.NAME, Place.Field.OPENING_HOURS, Place.Field.PHONE_NUMBER);
-                Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
-                        .build(MainActivity.this);
-                someActivityResultLauncher.launch(intent);
+            public Uri getWebsiteUri() {
+                return null;
             }
-        });
-        refresh.setOnClickListener(v ->{
-            location.RemoveAllMarkers();
-            location.getUpdates();
-        });
+
+            @Nullable
+            @Override
+            public LatLng getLatLng() {
+                return new LatLng(19.9975, 73.7898);
+            }
+
+            @Nullable
+            @Override
+            public LatLngBounds getViewport() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public AddressComponents getAddressComponents() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public OpeningHours getOpeningHours() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public BusinessStatus getBusinessStatus() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public PlusCode getPlusCode() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Double getRating() {
+                return 5.0;
+            }
+
+            @Nullable
+            @Override
+            public Integer getIconBackgroundColor() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public Integer getPriceLevel() {
+                return 4;
+            }
+
+            @Nullable
+            @Override
+            public Integer getUserRatingsTotal() {
+                return 5;
+            }
+
+            @Nullable
+            @Override
+            public Integer getUtcOffsetMinutes() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public String getAddress() {
+                return "Humare Dilo Ma...";
+            }
+
+            @Nullable
+            @Override
+            public String getIconUrl() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public String getId() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public String getName() {
+                return "Nashik";
+            }
+
+            @Nullable
+            @Override
+            public String getPhoneNumber() {
+                return "7709436123";
+            }
+
+            @Nullable
+            @Override
+            public List<String> getAttributions() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public List<PhotoMetadata> getPhotoMetadatas() {
+                return null;
+            }
+
+            @Nullable
+            @Override
+            public List<Type> getTypes() {
+                return null;
+            }
+
+            @Override
+            public int describeContents() {
+                return 0;
+            }
+
+            @Override
+            public void writeToParcel(Parcel dest, int flags) {
+
+            }
+        };
+
+        //Setting click listeners
+        toolbar.setNavigationOnClickListener(this);
+        navigationView.setNavigationItemSelectedListener(this);
+        search.setOnClickListener(this);
+        refresh.setOnClickListener(this);
+
+    }
+
+    private void initComponent() {
+        // get the bottom sheet view
+        LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
+        placeName = (TextView) llBottomSheet.findViewById(R.id.placeName);
+        address = (TextView) llBottomSheet.findViewById(R.id.paddress);
+        distance = (TextView) llBottomSheet.findViewById(R.id.distance);
+        // init the bottom sheet behavior
+        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
+
+        // change the state of the bottom sheet
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+        bottomSheetBehavior.setFitToContents(true);
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
     }
 
     private void getImageURI(String imgName) {
@@ -295,13 +352,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void signout(){
-        //To Delete the User
-//        AuthUI.getInstance().delete(getApplicationContext()).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void unused) {
-//                Toast.makeText(getApplicationContext(),"Delete Successful",Toast.LENGTH_SHORT).show();
-//            }
-//        });
+
         //To Sign Out User
         AuthUI.getInstance()
                 .signOut(this)
@@ -345,11 +396,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void ShowData(Place placeData) {
+        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
         location.RemoveAllMarkers();
         location.AddMarkerToPos(placeData.getLatLng(), false);
-        BottomsheetShowData fragment = new BottomsheetShowData(placeData);
-        fragment.setCancelable(false);
-        fragment.show(getSupportFragmentManager(), "TAG");
+
+        placeName.setText(placeData.getName());
+        address.setText(placeData.getAddress());
+
+//        double dis = distance(location.getMyLocation().latitude, location.getMyLocation().longitude,
+//                placeData.getLatLng().latitude,placeData.getLatLng().longitude);
+        double dis = SphericalUtil.computeDistanceBetween(location.getMyLocation(), placeData.getLatLng());
+
+        distance.setText(String.format("%.2f", dis / 1000)+" km");
+        //        BottomsheetShowData fragment = new BottomsheetShowData(placeData);
+//        fragment.setCancelable(false);
+//        fragment.show(getSupportFragmentManager(), "TAG");
     }
 
     @Override
@@ -390,6 +452,54 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
         return true;
     }
+
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        if(id == R.id.topAppBar){
+            FirebaseUser finalUser = user;
+            drawerLayout.openDrawer(GravityCompat.START);
+            TextView user_name = navigationView.findViewById(R.id.user_name);
+            TextView gmail = navigationView.findViewById(R.id.gmail);
+            CircleImageView img = navigationView.findViewById(R.id.profilepic);
+            if(finalUser != null) {
+                String name = finalUser.getDisplayName();
+                String email = finalUser.getEmail();
+                String imgUri = String.valueOf(user.getPhotoUrl());
+                if (name == null || name.isEmpty()) {
+                    user_name.setText(finalUser.getPhoneNumber());
+                } else {
+                    user_name.setText(name);
+                }
+
+                if (email == null || email.isEmpty()) {
+                    gmail.setText("Gmail not found");
+                } else {
+                    gmail.setText(finalUser.getEmail());
+                }
+                if (imgUri.contains("null") || imgUri.isEmpty()) {
+//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
+                    img.setImageBitmap(profileImg);
+
+                } else {
+//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
+                    img.setImageBitmap(profileImg);
+                }
+            }
+        }else if(id == R.id.searchEdit){
+            List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG,
+                    Place.Field.NAME, Place.Field.OPENING_HOURS, Place.Field.PHONE_NUMBER);
+            Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
+                    .build(MainActivity.this);
+//            someActivityResultLauncher.launch(intent);
+            ShowData(nashik);
+        } else if(id == R.id.recenter){
+            location.RemoveAllMarkers();
+            location.getUpdates();
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        }
+    }
+
     private class DownloadImageFromInternet extends AsyncTask<String, Void, Bitmap> {
         CircleImageView imageView;
         public DownloadImageFromInternet() {
@@ -432,4 +542,33 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawable.draw(canvas);
         return bitmap;
     }
+    @Override
+    public void onBackPressed()
+    {
+        switch(bottomSheetBehavior.getState())
+        {
+            case BottomSheetBehavior.STATE_HIDDEN:
+                super.onBackPressed();
+                break;
+            case BottomSheetBehavior.STATE_DRAGGING:
+                super.onBackPressed();
+                break;
+            case BottomSheetBehavior.STATE_EXPANDED:
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                break;
+            case BottomSheetBehavior.STATE_HALF_EXPANDED:
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                break;
+            case BottomSheetBehavior.STATE_COLLAPSED:
+                super.onBackPressed();
+                break;
+            case BottomSheetBehavior.STATE_SETTLING:
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                break;
+            default:
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                break;
+        }
+    }
+
 }
