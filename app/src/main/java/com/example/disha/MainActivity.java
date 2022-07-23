@@ -13,10 +13,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.disha.AddPlace.PlaceInfo;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.Reviews.ActivityReview;
+import com.example.disha.ViewDetails.BottomSheet.CustomBottomSheet;
 import com.example.disha.locationModel.Location;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -48,6 +52,9 @@ import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlusCode;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FetchPlaceResponse;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -84,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     DrawerLayout drawerLayout;
     NavigationView navigationView;
     TextView placeName, address, phone, description, distance;
+    View root;
     ActivityResultLauncher<Intent> profileImgIntent;
     private final ArrayList<String> suggestionsArray = new ArrayList<String>();
     private final ArrayList<String> dummyArray = new ArrayList<String>();
@@ -105,20 +113,32 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
     private Place nashik;
-
+    private RatingBar ratings;
+    private TextView ratings_txt;
+    private TextView disp_phone;
+    private TextView openHrs;
+    private PlacesClient placesClient;
+    private CustomBottomSheet sheet;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        root = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
+        setContentView(root);
         //Initializing Facebook Auth
 //        FacebookSdk.sdkInitialize(getApplicationContext());
 //        AppEventsLogger.activateApp(getApplication());
 
         //Getting User
         user = FirebaseAuth.getInstance().getCurrentUser();
-
+        if(user == null){
+            Intent intent = new Intent(MainActivity.this, Permission.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
         //Initializing PLaces API and DAO
         Places.initialize(getApplicationContext(),"AIzaSyDWh2tZNTZKRJQQIs6pqspqEiX7f8mxl08");
+
         daoPlaceData = new DAOPlaceData();
 
         //UI
@@ -137,8 +157,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //        boolean phone = checkPhone(user);
         new DownloadImageFromInternet()
             .execute(String.valueOf(user.getPhotoUrl()));
-        initComponent();
-
+//        initComponent();
+        sheet = new CustomBottomSheet(root,MainActivity.this);
         nashik = new Place() {
             @Nullable
             @Override
@@ -227,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             @Nullable
             @Override
             public String getId() {
-                return null;
+                return "ChIJ50mPYcfqwjsRlURfE_FE0qI";
             }
 
             @Nullable
@@ -272,28 +292,43 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         };
 
         //Setting click listeners
-        toolbar.setNavigationOnClickListener(this);
+        toolbar.setNavigationOnClickListener(v -> {
+            FirebaseUser finalUser = user;
+            drawerLayout.openDrawer(GravityCompat.START);
+            TextView user_name = navigationView.findViewById(R.id.user_name);
+            TextView gmail = navigationView.findViewById(R.id.gmail);
+            CircleImageView img = navigationView.findViewById(R.id.profilepic);
+            if(finalUser != null) {
+                String name = finalUser.getDisplayName();
+                String email = finalUser.getEmail();
+                String imgUri = String.valueOf(user.getPhotoUrl());
+                if (name == null || name.isEmpty()) {
+                    user_name.setText(finalUser.getPhoneNumber());
+                } else {
+                    user_name.setText(name);
+                }
+
+                if (email == null || email.isEmpty()) {
+                    gmail.setText("Gmail not found");
+                } else {
+                    gmail.setText(finalUser.getEmail());
+                }
+                if (imgUri.contains("null") || imgUri.isEmpty()) {
+//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
+                    img.setImageBitmap(profileImg);
+
+                } else {
+//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
+                    img.setImageBitmap(profileImg);
+                }
+            }
+        });
         navigationView.setNavigationItemSelectedListener(this);
         search.setOnClickListener(this);
         refresh.setOnClickListener(this);
 
     }
 
-    private void initComponent() {
-        // get the bottom sheet view
-        LinearLayout llBottomSheet = (LinearLayout) findViewById(R.id.bottom_sheet);
-        placeName = (TextView) llBottomSheet.findViewById(R.id.placeName);
-        address = (TextView) llBottomSheet.findViewById(R.id.paddress);
-        distance = (TextView) llBottomSheet.findViewById(R.id.distance);
-        // init the bottom sheet behavior
-        bottomSheetBehavior = BottomSheetBehavior.from(llBottomSheet);
-
-        // change the state of the bottom sheet
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-        bottomSheetBehavior.setFitToContents(true);
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
-    }
 
     private void getImageURI(String imgName) {
         final Uri[] imgUri = {null};
@@ -396,23 +431,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void ShowData(Place placeData) {
-        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-
+        sheet.setState(BottomSheetBehavior.STATE_EXPANDED);
         location.RemoveAllMarkers();
         location.AddMarkerToPos(placeData.getLatLng(), false);
+        sheet.setPlace(placeData, location);
+        sheet.initComponent();
+        sheet.setData();
 
-        placeName.setText(placeData.getName());
-        address.setText(placeData.getAddress());
 
-//        double dis = distance(location.getMyLocation().latitude, location.getMyLocation().longitude,
-//                placeData.getLatLng().latitude,placeData.getLatLng().longitude);
-        double dis = SphericalUtil.computeDistanceBetween(location.getMyLocation(), placeData.getLatLng());
 
-        distance.setText(String.format("%.2f", dis / 1000)+" km");
-        //        BottomsheetShowData fragment = new BottomsheetShowData(placeData);
+//        List<String> s = placeData.getOpeningHours().getWeekdayText();
+//        openHrs.setText(s.get(0)+s.get(s.size()-1));
+//        disp_phone.setText(placeData.getPhoneNumber());
+//        ratings.setRating(Float.parseFloat(String.valueOf(placeData.getRating())));
+//        ratings_txt.setText(placeData.getUserRatingsTotal());
+//        BottomsheetShowData fragment = new BottomsheetShowData(placeData);
 //        fragment.setCancelable(false);
 //        fragment.show(getSupportFragmentManager(), "TAG");
     }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -456,39 +493,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public void onClick(View v) {
         int id = v.getId();
-        if(id == R.id.topAppBar){
-            FirebaseUser finalUser = user;
-            drawerLayout.openDrawer(GravityCompat.START);
-            TextView user_name = navigationView.findViewById(R.id.user_name);
-            TextView gmail = navigationView.findViewById(R.id.gmail);
-            CircleImageView img = navigationView.findViewById(R.id.profilepic);
-            if(finalUser != null) {
-                String name = finalUser.getDisplayName();
-                String email = finalUser.getEmail();
-                String imgUri = String.valueOf(user.getPhotoUrl());
-                if (name == null || name.isEmpty()) {
-                    user_name.setText(finalUser.getPhoneNumber());
-                } else {
-                    user_name.setText(name);
-                }
-
-                if (email == null || email.isEmpty()) {
-                    gmail.setText("Gmail not found");
-                } else {
-                    gmail.setText(finalUser.getEmail());
-                }
-                if (imgUri.contains("null") || imgUri.isEmpty()) {
-//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
-                    img.setImageBitmap(profileImg);
-
-                } else {
-//                    Toast.makeText(getApplicationContext(), imgUri, Toast.LENGTH_SHORT).show();
-                    img.setImageBitmap(profileImg);
-                }
-            }
-        }else if(id == R.id.searchEdit){
+        if(id == R.id.searchEdit){
             List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG,
-                    Place.Field.NAME, Place.Field.OPENING_HOURS, Place.Field.PHONE_NUMBER);
+                    Place.Field.NAME, Place.Field.ID);
             Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
                     .build(MainActivity.this);
 //            someActivityResultLauncher.launch(intent);
@@ -496,7 +503,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else if(id == R.id.recenter){
             location.RemoveAllMarkers();
             location.getUpdates();
-            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+            sheet.setState(BottomSheetBehavior.STATE_HIDDEN);
         }
     }
 

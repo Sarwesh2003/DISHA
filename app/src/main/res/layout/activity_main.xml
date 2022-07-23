@@ -26,7 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            android:layout_margin="16dp">
+            android:layout_margin="16dp"
+            android:gravity="start">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/topAppBar"
@@ -42,24 +43,15 @@
                     android:id="@+id/searchEdit"
                     android:hint="Enter Address"
                     android:padding="8dp"
-                    android:background="#00000000"/>
+                    android:background="#00000000"
+                    android:drawableRight="@drawable/ic_voice"/>
+
             </com.google.android.material.appbar.MaterialToolbar>
         </com.google.android.material.appbar.AppBarLayout>
 
-        <include layout="@layout/fragment_bottomsheet_show_data" />
+        <include
+            layout="@layout/fragment_bottomsheet_show_data" />
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/fab_directions"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_margin="@dimen/spacing_smlarge"-->
-<!--            android:clickable="true"-->
-<!--            android:tint="@android:color/white"-->
-<!--            app:fabSize="normal"-->
-<!--            app:layout_anchor="@id/bottom_sheet"-->
-<!--            app:layout_anchorGravity="top|end"-->
-<!--            app:rippleColor="@android:color/white"-->
-<!--            app:srcCompat="@drawable/accurate" />-->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/recenter"
             android:layout_width="wrap_content"
@@ -74,23 +66,7 @@
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 
-    <!--    <RelativeLayout-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_margin="16dp">-->
 
-<!--        <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--            android:id="@+id/recenter"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            app:backgroundTint="@color/white"-->
-<!--            android:layout_alignParentBottom="true"-->
-<!--            android:layout_alignParentRight="true"-->
-<!--            android:layout_margin="10dp"-->
-<!--            app:tint="@color/close"-->
-<!--            android:src="@drawable/accurate"-->
-<!--            app:rippleColor="@color/white"/>-->
-<!--    </RelativeLayout>-->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
@@ -100,67 +76,3 @@
         app:menu="@menu/nav_menu"
         android:visibility="visible"/>
 </androidx.drawerlayout.widget.DrawerLayout>
-<!--<RelativeLayout-->
-<!--    android:layout_width="match_parent"-->
-<!--    android:layout_height="match_parent"-->
-<!--    tools:context=".MainActivity">-->
-<!--    <FrameLayout-->
-<!--        android:id="@+id/frmlyout_locationnote_mapholder"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent">-->
-<!--        &lt;!&ndash; You can add your Map here&ndash;&gt;-->
-<!--        <fragment-->
-<!--            android:id="@+id/map_fragment"-->
-<!--            android:name="com.google.android.gms.maps.SupportMapFragment"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent" />-->
-<!--    </FrameLayout>-->
-<!--    <com.google.android.material.appbar.AppBarLayout-->
-<!--        android:id="@+id/appbar"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_margin="10dp"-->
-<!--        app:elevation="10dp"-->
-<!--        android:theme="@style/AppTheme"-->
-<!--        android:background="@drawable/appbar_back">-->
-<!--        <androidx.appcompat.widget.Toolbar-->
-<!--            android:id="@+id/toolbar"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:minHeight="?attr/actionBarSize">-->
-<!--            <RelativeLayout-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="match_parent">-->
-<!--                <ImageView-->
-<!--                    android:id="@+id/menu"-->
-<!--                    android:layout_width="wrap_content"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_alignParentStart="true"-->
-<!--                    android:layout_centerVertical="true"-->
-<!--                    android:src="@drawable/ic_menu"-->
-<!--                    app:tint="@color/black" />-->
-<!--                <EditText-->
-<!--                    android:layout_width="match_parent"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:id="@+id/searchEdit"-->
-<!--                    android:hint="Enter Address"-->
-<!--                    android:layout_toEndOf="@+id/menu"-->
-<!--                    android:padding="8dp"-->
-<!--                    android:background="#00000000"/>-->
-<!--            </RelativeLayout>-->
-<!--        </androidx.appcompat.widget.Toolbar>-->
-<!--    </com.google.android.material.appbar.AppBarLayout>-->
-
-
-<!--    <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-<!--        android:id="@+id/recenter"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:backgroundTint="@color/white"-->
-<!--        android:layout_alignParentBottom="true"-->
-<!--        android:layout_alignParentRight="true"-->
-<!--        android:layout_margin="10dp"-->
-<!--        app:tint="@color/close"-->
-<!--        android:src="@drawable/accurate"-->
-<!--        app:rippleColor="@color/white"/>-->
-<!--</RelativeLayout>-->

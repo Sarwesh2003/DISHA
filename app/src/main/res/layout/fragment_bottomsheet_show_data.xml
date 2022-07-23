@@ -7,7 +7,7 @@
     android:background="@android:color/transparent"
     android:orientation="vertical"
     app:behavior_hideable="true"
-    app:behavior_peekHeight="85dp"
+    app:behavior_peekHeight="100dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
     <androidx.cardview.widget.CardView
@@ -21,6 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
+
 
             <View
                 android:layout_width="30dp"
@@ -60,6 +61,7 @@
                     android:orientation="horizontal">
 
                     <RatingBar
+                        android:id="@+id/display_ratings"
                         style="@style/Yellow.Small.AppCompatRatingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -69,6 +71,7 @@
                         android:theme="@style/Yellow.Small.AppCompatRatingBar" />
 
                     <TextView
+                        android:id="@+id/rating_txt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="4.7 (51)"
@@ -125,7 +128,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="?attr/actionBarSize"
                             android:background="@android:color/transparent"
-                            app:srcCompat="@drawable/ic_location_pin"
+                            app:srcCompat="@drawable/ic_location_pin_small"
                             app:tint="@color/grey_20" />
 
                         <View
@@ -153,7 +156,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="?attr/actionBarSize"
                             android:background="@android:color/transparent"
-                            app:srcCompat="@drawable/phone"
+                            app:srcCompat="@drawable/ic_phone_small"
                             app:tint="@color/grey_20" />
 
                         <View
@@ -161,6 +164,7 @@
                             android:layout_height="0dp" />
 
                         <TextView
+                            android:id="@+id/display_phone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
@@ -180,7 +184,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="?attr/actionBarSize"
                             android:background="@android:color/transparent"
-                            app:srcCompat="@drawable/ic_calender"
+                            app:srcCompat="@drawable/ic_business_status"
                             app:tint="@color/grey_20" />
 
                         <View
@@ -188,6 +192,7 @@
                             android:layout_height="0dp" />
 
                         <TextView
+                            android:id="@+id/business_status"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="center_vertical"
@@ -198,9 +203,47 @@
                     </LinearLayout>
 
                 </LinearLayout>
-
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginLeft="@dimen/spacing_medium"
+                    android:layout_marginStart="@dimen/spacing_large"
+                    android:layout_marginEnd="@dimen/spacing_large"
+                    android:background="@color/grey_10" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp">
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/redirect_maps"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Directions"
+                    android:background="@drawable/slider_back"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:textColor="@color/white"
+                    android:drawableStart="@drawable/ic_directions"/>
+                <androidx.appcompat.widget.AppCompatButton
+                    android:id="@+id/view_details_page"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:text="Details"
+                    android:layout_weight="1"
+                    android:background="@drawable/slider_back"
+                    android:backgroundTint="@color/btn_color_2"
+                    android:textColor="@color/white"
+                    android:drawableEnd="@drawable/ic_details"
+                    android:layout_margin="4dp"/>
             </LinearLayout>
-
+            </LinearLayout>
+<!--            #5B84B1-->
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>
