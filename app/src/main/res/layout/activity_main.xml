@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".MainActivity" >
+    tools:context=".Main.MainActivity" >
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -27,26 +27,11 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
             android:layout_margin="16dp"
+            android:background="@color/white"
             android:gravity="start">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/topAppBar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                app:navigationIcon="@drawable/ic_menu"
-                app:navigationIconTint="@color/black"
-                android:background="@color/white"
-                app:contentInsetEnd="@dimen/browser_actions_context_menu_min_padding">
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/searchEdit"
-                    android:hint="Enter Address"
-                    android:padding="8dp"
-                    android:background="#00000000"
-                    android:drawableRight="@drawable/ic_voice"/>
-
-            </com.google.android.material.appbar.MaterialToolbar>
+            <include
+                android:id="@+id/float_toolbar"
+                layout="@layout/toolbar_custom" />
         </com.google.android.material.appbar.AppBarLayout>
 
         <include

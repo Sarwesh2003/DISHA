@@ -4,20 +4,24 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.disha.AddPlace.data.PlaceData;
 import com.example.disha.R;
 
 public class FragmentDetails extends Fragment {
     View root;
-    String[] data;
+    PlaceData data;
     TextView placeName, placeDescription, placeAddress, contact, toilet, ramp, handrail, braille, facilities, lift, wheelchair;
 
-    public FragmentDetails(String[] data) {
+    public FragmentDetails(PlaceData data) {
+
         this.data = data;
+//        Log.d("From: FragmentDetails", data[0]);
     }
 
     @Override
@@ -36,21 +40,22 @@ public class FragmentDetails extends Fragment {
         facilities = root.findViewById(R.id.facilities);
         lift = root.findViewById(R.id.lift);
         wheelchair = root.findViewById(R.id.wheelchair);
-        Inititalize();
+        if(data != null)
+            Inititalize();
         return root;
     }
 
     public void Inititalize(){
-        placeName.setText(data[0]);
-        placeDescription.setText(data[3]+", "+data[4]+"\n"+data[1]);
-        placeAddress.setText(data[7]);
-        contact.setText(data[2]);
-        toilet.setText(data[10]+"\n"+"Total Toilets Available: "+data[11]);
-        ramp.setText(data[8]);
-        handrail.setText(data[9]);
-        braille.setText(data[12]);
-        facilities.setText(data[15]);
-        lift.setText(data[13]);
-        wheelchair.setText(data[14]);
+        placeName.setText(data.getPlaceName());
+        placeDescription.setText(data.getPlaceType()+", "+data.getInfraType()+"\n"+data.getPlacedescription());
+        placeAddress.setText(data.getAddress());
+        contact.setText(data.getPhoneNo());
+        toilet.setText(data.getToilet()+"\n"+"Total Toilets Available: "+data.getNtoilet());
+        ramp.setText(data.getRamp());
+        handrail.setText(data.getHandrail());
+        braille.setText(data.getBraille());
+        facilities.setText(data.getPlacedescription());
+        lift.setText(data.getLifts());
+        wheelchair.setText(data.getWheelchair());
     }
 }

@@ -1,8 +1,6 @@
 package com.example.disha.Reviews;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,11 +16,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.example.disha.AddPlace.data.DAOPlaceData;
-import com.example.disha.AddPlace.data.PlaceData;
-import com.example.disha.MainActivity;
+import com.example.disha.Main.MainActivity;
 import com.example.disha.R;
 import com.example.disha.Reviews.dataModel.DAOReview;
 import com.example.disha.Reviews.dataModel.Review;

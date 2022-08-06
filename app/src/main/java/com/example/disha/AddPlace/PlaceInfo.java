@@ -1,6 +1,7 @@
 package com.example.disha.AddPlace;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentManager;
 
@@ -14,8 +15,7 @@ import com.google.android.material.textfield.TextInputEditText;
 
 public class PlaceInfo extends AppCompatActivity {
     Toolbar toolbar;
-    Button cont, prev;
-    ImageView backBtn;
+    AppCompatButton prev;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -23,19 +23,16 @@ public class PlaceInfo extends AppCompatActivity {
         Initialize();
 
         prev = findViewById(R.id.prev);
-        backBtn = findViewById(R.id.back);
-        backBtn.setOnClickListener(v -> {
+        prev.setEnabled(false);
+        toolbar.setNavigationOnClickListener(v -> {
             onBackPressed();
         });
-        prev.setEnabled(false);
-
     }
 
     public void Initialize(){
         toolbar=findViewById(R.id.toolbar);
-        toolbar.setTitle("");
         setSupportActionBar(toolbar);
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_up,R.anim.slide_down).replace(R.id.fragment_form_container, new PlaceDetails()).commit();
+        fragmentManager.beginTransaction().setCustomAnimations(R.anim.slide_up,R.anim.slide_down).addToBackStack(null).replace(R.id.fragment_form_container, new PlaceDetails()).commit();
     }
 }

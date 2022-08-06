@@ -220,6 +220,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="4dp">
+<!--                @drawable/slider_back-->
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/redirect_maps"
                     android:layout_width="0dp"
@@ -227,8 +228,10 @@
                     android:text="Directions"
                     android:background="@drawable/slider_back"
                     android:layout_weight="1"
+                    android:drawableTint="@color/btn_color_1"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:textColor="@color/btn_color_1"
                     android:layout_margin="4dp"
-                    android:textColor="@color/white"
                     android:drawableStart="@drawable/ic_directions"/>
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/view_details_page"
@@ -237,7 +240,8 @@
                     android:text="Details"
                     android:layout_weight="1"
                     android:background="@drawable/slider_back"
-                    android:backgroundTint="@color/btn_color_2"
+                    android:foreground="?android:attr/selectableItemBackground"
+                    android:backgroundTint="@color/btn_color_1"
                     android:textColor="@color/white"
                     android:drawableEnd="@drawable/ic_details"
                     android:layout_margin="4dp"/>

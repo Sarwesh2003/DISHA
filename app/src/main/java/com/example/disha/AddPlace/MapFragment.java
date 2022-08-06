@@ -8,6 +8,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -41,7 +42,7 @@ public class MapFragment extends Fragment {
     Context ctx;
     ArrayList<String> data;
     Button submit, prev;
-    TextView title;
+    TextView title, step;
     public MapFragment() {
 
     }
@@ -64,7 +65,13 @@ public class MapFragment extends Fragment {
         data = new ArrayList<>();
         submit = getActivity().findViewById(R.id.continueBtn);
         title = getActivity().findViewById(R.id.tit);
+        step = getActivity().findViewById(R.id.step);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(n -> {
+            getActivity().onBackPressed();
+        });
         prev = getActivity().findViewById(R.id.prev);
+        step.setText("Step: 02");
         title.setText("Select Location");
         Bundle data_bundle = this.getArguments();
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -119,7 +126,7 @@ public class MapFragment extends Fragment {
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_up,R.anim.slide_down);
         fragmentTransaction.addToBackStack(null);
-        Question1 q1 = new Question1();
+        Ramp q1 = new Ramp();
         q1.setArguments(b);
         fragmentTransaction.replace(R.id.fragment_form_container,q1).commit();
     }

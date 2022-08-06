@@ -2,6 +2,7 @@ package com.example.disha.AddPlace;
 
 import android.os.Bundle;
 
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.example.disha.R;
 import com.google.android.material.textfield.TextInputEditText;
@@ -19,7 +21,8 @@ import com.google.android.material.textfield.TextInputEditText;
 public class PlaceDetails extends Fragment {
     AutoCompleteTextView btype, infratype;
     TextInputEditText placeName, desc, pno;
-    Button cont, prev;
+    AppCompatButton cont, prev;
+    TextView title, step;
     public PlaceDetails() {
         // Required empty public constructor
     }
@@ -34,9 +37,11 @@ public class PlaceDetails extends Fragment {
         infratype = (AutoCompleteTextView) v.findViewById(R.id.infraType);
         cont = getActivity().findViewById(R.id.continueBtn);
         prev = getActivity().findViewById(R.id.prev);
+        step = getActivity().findViewById(R.id.step);
         placeName = v.findViewById(R.id.pname);
         desc = v.findViewById(R.id.bdes);
         pno = v.findViewById(R.id.phno);
+        title = getActivity().findViewById(R.id.tit);
         initializeAdapters();
 
         cont.setOnClickListener(l -> {
@@ -60,11 +65,14 @@ public class PlaceDetails extends Fragment {
     }
 
     public void initializeAdapters(){
+        step.setText("Step: 01");
+        title.setText("Fill in the basic information");
         String[] business=getResources().getStringArray(R.array.bussiness_type);
         String[] infrastructure=getResources().getStringArray(R.array.infrastructure_type);
         ArrayAdapter<String> badapter=new ArrayAdapter<>(getContext(),R.layout.dropdown_btype,business);
         ArrayAdapter<String> iadapter=new ArrayAdapter<>(getContext(),R.layout.dropdown_btype,infrastructure);
         btype.setAdapter(badapter);
         infratype.setAdapter(iadapter);
+
     }
 }

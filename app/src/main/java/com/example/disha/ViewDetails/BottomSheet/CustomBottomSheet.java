@@ -1,40 +1,39 @@
 package com.example.disha.ViewDetails.BottomSheet;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.content.Intent;
 import android.util.Log;
 import android.view.View;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 
-import com.example.disha.MainActivity;
+import com.example.disha.AddPlace.data.DAOPlaceData;
+import com.example.disha.AddPlace.data.PlaceData;
 import com.example.disha.R;
+import com.example.disha.ViewDetails.ViewDetails;
 import com.example.disha.locationModel.Location;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.Period;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.maps.android.SphericalUtil;
 
-import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CustomBottomSheet {
     LinearLayout mLayout;
@@ -45,7 +44,10 @@ public class CustomBottomSheet {
     RatingBar ratings;
     PlacesClient placesClient;
     Location location;
+    String[] data = null;
+    boolean flag = false;
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
+    private AppCompatButton view_details_btn, directions_btn;
 
     public CustomBottomSheet(View root, Context context) {
         this.root = root;
@@ -60,7 +62,9 @@ public class CustomBottomSheet {
     public void setState(int state){
         bottomSheetBehavior.setState(state);
     }
-
+    public int getState(){
+        return bottomSheetBehavior.getState();
+    }
     public void initComponent() {
         placeName = (TextView) mLayout.findViewById(R.id.placeName);
         address = (TextView) mLayout.findViewById(R.id.paddress);
@@ -69,7 +73,69 @@ public class CustomBottomSheet {
         ratings_txt = (TextView) mLayout.findViewById(R.id.rating_txt);
         disp_phone = (TextView) mLayout.findViewById(R.id.display_phone);
         bstatus = (TextView) mLayout.findViewById(R.id.business_status);
+        view_details_btn = root.findViewById(R.id.view_details_page);
+        directions_btn = root.findViewById(R.id.redirect_maps);
+        view_details_btn.setOnClickListener(v -> {
+            getAllDetails(place);
+        });
 //        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+    }
+
+    private void getAllDetails(Place place) {
+        DAOPlaceData daoPlaceData = new DAOPlaceData();
+        Query retquery = daoPlaceData.getReference().orderByChild("placeName").equalTo(place.getName());
+        retquery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    detailsFetched(true);
+                }else{
+                    detailsFetched(false);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Toast.makeText(context, "Something went wrong. Try Again", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+//        daoPlaceData.getReference().addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot root) {
+//                if(root.exists()){
+//                    boolean flag = false;
+//                    for(DataSnapshot snapshot : root.getChildren()){
+//                        String child = snapshot.child("placeName").getValue(String.class);
+//                        if(child.equals(place.getName())){
+//                            PlaceData data = snapshot.getValue(PlaceData.class);
+//                            flag = true;
+//                            detailsFetched(data, true);
+//                        }
+//                    }
+//                    if(!flag){
+//                        detailsFetched(null, false);
+//                    }
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(context, "Error Occurred", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+
+    }
+
+    private void detailsFetched(boolean flg) {
+        Intent view = new Intent(context, ViewDetails.class);
+        if(flg){
+            view.putExtra("PlaceFound", true);
+            view.putExtra("PlaceName", place.getName());
+        }else{
+            view.putExtra("PlaceFound", false);
+        }
+        context.startActivity(view);
     }
 
     public void setPlace(Place place, Location location){
@@ -97,8 +163,8 @@ public class CustomBottomSheet {
             throw new Exception();
         }
         List<Place.Field> fieldList = Arrays.asList(Place.Field.PHONE_NUMBER,
-                Place.Field.RATING, Place.Field.USER_RATINGS_TOTAL, Place.Field.PHOTO_METADATAS,
-                Place.Field.BUSINESS_STATUS, Place.Field.ICON_URL, Place.Field.ICON_BACKGROUND_COLOR);
+                Place.Field.RATING, Place.Field.USER_RATINGS_TOTAL,
+                Place.Field.BUSINESS_STATUS);
         final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, fieldList);
 
         placesClient.fetchPlace(request).addOnSuccessListener(fetchPlaceResponse -> {

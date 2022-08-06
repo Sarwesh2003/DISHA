@@ -32,6 +32,9 @@ public class ListLocations extends Fragment implements LocationAdapter.OnLocatio
     ProgressBar progressBar;
     RecyclerView recyclerView;
     ArrayList<Locations> members;
+    String placeName = "";
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

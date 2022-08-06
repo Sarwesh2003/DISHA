@@ -15,6 +15,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -25,7 +27,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.disha.MainActivity;
+import com.example.disha.Main.MainActivity;
 import com.example.disha.R;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.AddPlace.data.PlaceData;
@@ -44,12 +46,12 @@ public class UploadImages extends Fragment {
 
     private static final int PICK_IMAGE_REQUEST = 22;
     View root;
-    TextView title;
+    TextView title, step;
     TextInputEditText ramps, handrails, lifts, wheelchairs, toilets, braille, mainImg;
     ActivityResultLauncher<Intent> rampsRes, handrailRes, brailleRes, liftsRes, toiletRes, wheelchairRes, mainImgRes;
     private Uri rampsFile, handrailFile, toiletFile, brailleFile, wheelchairFile, liftsFile, mainImgFile;
     private ImageButton rampsBtn, handrailsBtn, liftsBtn, brailleBtn, wheelchairsBtn, toiletsBtn, mainImgBtn;
-    Button submit,prev;
+    AppCompatButton submit,prev;
     ArrayList<Uri> list;
     ArrayList<Uri> list1;
     @Override
@@ -173,7 +175,12 @@ public class UploadImages extends Fragment {
         brailleBtn = root.findViewById(R.id.braillebtn);
         mainImgBtn = root.findViewById(R.id.mainImgbtn);
         mainImg = root.findViewById(R.id.mainImg);
+        step = getActivity().findViewById(R.id.step);
         prev = getActivity().findViewById(R.id.prev);
+        Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> {
+            getActivity().onBackPressed();
+        });
         list = new ArrayList<>();
         Initallize();
 
@@ -261,6 +268,7 @@ public class UploadImages extends Fragment {
     }
 
     private void Initallize() {
+        step.setText("Step: 04");
         title.setText("Upload Images");
         prev.setEnabled(true);
     }

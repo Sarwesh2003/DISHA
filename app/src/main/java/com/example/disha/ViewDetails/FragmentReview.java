@@ -1,8 +1,10 @@
 package com.example.disha.ViewDetails;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -10,17 +12,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.disha.AddPlace.data.PlaceData;
-import com.example.disha.MainActivity;
 import com.example.disha.R;
+import com.example.disha.Reviews.ActivityReview;
 import com.example.disha.Reviews.dataModel.DAOReview;
-import com.example.disha.Reviews.dataModel.LocationAdapter;
-import com.example.disha.Reviews.dataModel.Locations;
-import com.example.disha.Reviews.dataModel.Review;
 import com.example.disha.ViewDetails.data.ReviewAdapter;
 import com.example.disha.ViewDetails.data.ReviewData;
 import com.google.firebase.database.DataSnapshot;
@@ -34,15 +34,16 @@ import java.util.ArrayList;
 public class FragmentReview extends Fragment {
 
     View root;
-    String[] data;
+    PlaceData data;
     DAOReview dao;
     RecyclerView recyclerView;
-    TextView message;
+
     ProgressBar progressBar;
+    AppCompatButton btn_review;
     ArrayList<ReviewData> list;
     private ReviewAdapter adapter;
 
-    public FragmentReview(String[] data) {
+    public FragmentReview(PlaceData data) {
         this.data = data;
         dao = new DAOReview();
         list = new ArrayList<>();
@@ -55,15 +56,21 @@ public class FragmentReview extends Fragment {
         LinearLayoutManager manager = new LinearLayoutManager(getContext());
         progressBar = root.findViewById(R.id.progress);
         recyclerView = root.findViewById(R.id.show_review);
-        message = root.findViewById(R.id.msg);
+        btn_review = root.findViewById(R.id.btn_review);
         adapter = new ReviewAdapter(getContext());
         recyclerView.setLayoutManager(manager);
         recyclerView.setAdapter(adapter);
-        loadData();
+        if(data != null)
+            loadData();
+        btn_review.setOnClickListener(v -> {
+            Intent i = new Intent(getActivity(), ActivityReview.class);
+            i.putExtra("Place", data.getPlaceName());
+            startActivity(i);
+        });
         return root;
     }
     private void loadData(){
-        Query retquery = dao.getReference().orderByChild("placeName").equalTo(data[0]);
+        Query retquery = dao.getReference().orderByChild("placeName").equalTo(data.getPlaceName());
         retquery.addListenerForSingleValueEvent(new ValueEventListener() {
             ArrayList<ReviewData> arr = new ArrayList<>();
             @Override
@@ -83,7 +90,7 @@ public class FragmentReview extends Fragment {
                         progressBar.setVisibility(android.view.View.GONE);
                     }
                 }else{
-                    message.setVisibility(View.VISIBLE);
+                    btn_review.setVisibility(View.VISIBLE);
                         if(progressBar != null){
                             progressBar.setVisibility(android.view.View.GONE);
                         }
