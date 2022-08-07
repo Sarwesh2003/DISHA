@@ -1,7 +1,15 @@
 package com.example.disha.AddPlace;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -10,13 +18,18 @@ import androidx.fragment.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.disha.R;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 
@@ -26,9 +39,30 @@ public class Ramp extends Fragment {
    View root;
    TextView title, step;
    AutoCompleteTextView ramp;
-   TextInputEditText ntoilet, desc;
+   TextInputEditText  imgUri, desc;
    AppCompatButton prev, submit;
-   ArrayList<String> data = new ArrayList<>();
+   LinearLayout rampImgLayout;
+   ImageButton imgbtn;
+   ActivityResultLauncher<Intent> rampsRes;
+   private Uri rampsFile;
+   ArrayList<Uri> list = new ArrayList<>();
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        rampsRes = registerForActivityResult(
+                new ActivityResultContracts.StartActivityForResult(),
+                new ActivityResultCallback<ActivityResult>() {
+                    @Override
+                    public void onActivityResult(ActivityResult result) {
+                        rampsFile = result.getData().getData();
+                        if(rampsFile != null){
+                            list.add(rampsFile);
+                            imgUri.setText(rampsFile.toString());
+                        }
+                    }
+                }
+        );
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -42,6 +76,9 @@ public class Ramp extends Fragment {
         prev = getActivity().findViewById(R.id.prev);
         submit = getActivity().findViewById(R.id.continueBtn);
         step = getActivity().findViewById(R.id.step);
+        rampImgLayout = root.findViewById(R.id.rampImgLayout);
+        imgbtn = root.findViewById(R.id.rampsbtn);
+        imgUri = root.findViewById(R.id.rampsImg);
         initializeAdapters();
         prev.setOnClickListener(v->{
             getActivity().onBackPressed();
@@ -50,40 +87,33 @@ public class Ramp extends Fragment {
         submit.setOnClickListener(v -> {
             sendData();
         });
+
+        imgbtn.setOnClickListener(v -> {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            rampsRes.launch(intent);
+        });
         return root;
     }
 
     private void sendData() {
-//        Bundle data_bundle = this.getArguments();
-//        data.addAll(data_bundle.getStringArrayList("data"));
-//        data.add(ramp.getText().toString());
-//        data.add(handrail.getText().toString());
-//        data.add(toilet.getText().toString());
-//        data.add(ntoilet.getText().toString());
-//        data.add(braille.getText().toString());
-//        data.add(lifts.getText().toString());
-//        data.add(wheelchair.getText().toString());
-//        data.add(desc.getText().toString());
-//        DAOPlaceData dao = new DAOPlaceData();
-//        Toast.makeText(getContext(), String.valueOf(data.size()), Toast.LENGTH_SHORT).show();
-//        PlaceData placeData = new PlaceData(data.get(0), data.get(1), data.get(2), data.get(3), data.get(4), data.get(5),
-//                data.get(6), data.get(7), data.get(8), data.get(9), data.get(10), data.get(11), data.get(12), data.get(13)
-//        ,data.get(14),data.get(15));
-//        dao.add(placeData).addOnSuccessListener(new OnSuccessListener<Void>() {
-//            @Override
-//            public void onSuccess(Void unused) {
-//                Toast.makeText(getContext(), "Successfully Inserted", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        Bundle b = new Bundle();
-//        b.putStringArrayList("data",data);
+        Bundle data_bundle = this.getArguments();
+        if (data_bundle != null) {
+            data_bundle.putString("ramp", ramp.getText().toString());
+            data_bundle.putString("rampDescription", desc.getText().toString());
+        }
+        if(list.size() > 0)
+            data_bundle.putString("RampsImg", list.get(0).toString());
+        else
+            data_bundle.putString("RampsImg", null);
         FragmentManager fragmentManager = this.getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_up,R.anim.slide_down);
         fragmentTransaction.addToBackStack(null);
-//        UploadImages uploadImages = new UploadImages();
-//        uploadImages.setArguments(b);
-        fragmentTransaction.replace(R.id.fragment_form_container, new Handrail()).commit();
+        Handrail frg_handrail = new Handrail();
+        frg_handrail.setArguments(data_bundle);
+        fragmentTransaction.replace(R.id.fragment_form_container, frg_handrail).commit();
     }
 
     public void initializeAdapters(){
@@ -92,12 +122,17 @@ public class Ramp extends Fragment {
         String[] facility=getResources().getStringArray(R.array.facilities);
         ArrayAdapter<String> adapter=new ArrayAdapter<>(getContext(),R.layout.dropdown_btype,facility);
         ramp.setAdapter(adapter);
-//        String[] facility_lift=getResources().getStringArray(R.array.facility_lift);
-//        ArrayAdapter<String> adapterLift=new ArrayAdapter<>(getContext(),R.layout.dropdown_btype,facility_lift);
-//        handrail.setAdapter(adapter);
-//        toilet.setAdapter(adapter);
-//        braille.setAdapter(adapter);
-//        lifts.setAdapter(adapterLift);
-//        wheelchair.setAdapter(adapter);
+
+        ramp.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(facility[position].equals("Available")){
+                    rampImgLayout.setVisibility(View.VISIBLE);
+                }else{
+                    imgUri.setText("");
+                    rampImgLayout.setVisibility(View.GONE);
+                }
+            }
+        });
     }
 }

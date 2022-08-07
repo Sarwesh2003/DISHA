@@ -32,6 +32,7 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.Task;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -40,9 +41,10 @@ public class MapFragment extends Fragment {
     SupportMapFragment supportMapFragment;
     FusedLocationProviderClient client;
     Context ctx;
-    ArrayList<String> data;
+    HashMap<String, String> data;
     Button submit, prev;
     TextView title, step;
+    Bundle data_bundle;
     public MapFragment() {
 
     }
@@ -62,7 +64,7 @@ public class MapFragment extends Fragment {
         supportMapFragment = (SupportMapFragment)
                 getChildFragmentManager().findFragmentById(R.id.add_loc_map);
         client = LocationServices.getFusedLocationProviderClient(ctx);
-        data = new ArrayList<>();
+        data = new HashMap<>();
         submit = getActivity().findViewById(R.id.continueBtn);
         title = getActivity().findViewById(R.id.tit);
         step = getActivity().findViewById(R.id.step);
@@ -73,7 +75,7 @@ public class MapFragment extends Fragment {
         prev = getActivity().findViewById(R.id.prev);
         step.setText("Step: 02");
         title.setText("Select Location");
-        Bundle data_bundle = this.getArguments();
+        data_bundle = this.getArguments();
         if (ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(ctx, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             return v;
         }
@@ -85,12 +87,6 @@ public class MapFragment extends Fragment {
 //        assert data_bundle != null;
 
         submit.setOnClickListener(c -> {
-
-            data.add(data_bundle.getString("PlaceName"));
-            data.add(data_bundle.getString("Desc"));
-            data.add(data_bundle.getString("PhNo"));
-            data.add(data_bundle.getString("PType"));
-            data.add(data_bundle.getString("InfraType"));
             getAddress(data);
         });
         prev.setOnClickListener(l -> {
@@ -101,7 +97,7 @@ public class MapFragment extends Fragment {
     public void AddMarkerToPos(LatLng latLng, GoogleMap googleMap) {
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
     }
-    public void getAddress(ArrayList<String> d){
+    public void getAddress(HashMap<String, String> d){
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override
             public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -112,22 +108,24 @@ public class MapFragment extends Fragment {
         });
     }
 
-    private void ShowToast(ArrayList<String> d, String lat, String lng, String address) {
-        d.add(lat);
-        d.add(lng);
-        d.add(address);
+    private void ShowToast(HashMap<String, String> d, String lat, String lng, String address) {
+        d.put("Lat",lat);
+        d.put("Lang", lng);
+        d.put("Address", address);
         sendData(d);
     }
 
-    private void sendData(ArrayList<String> d) {
-        Bundle b = new Bundle();
-        b.putStringArrayList("data",d);
+    private void sendData(HashMap<String, String> d) {
+//        Bundle b = new Bundle();
+        data_bundle.putString("Lat", d.get("Lat"));
+        data_bundle.putString("Lang", d.get("Lang"));
+        data_bundle.putString("Address", d.get("Address"));
         FragmentManager fragmentManager = this.getParentFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(R.anim.slide_up,R.anim.slide_down);
         fragmentTransaction.addToBackStack(null);
         Ramp q1 = new Ramp();
-        q1.setArguments(b);
+        q1.setArguments(data_bundle);
         fragmentTransaction.replace(R.id.fragment_form_container,q1).commit();
     }
 

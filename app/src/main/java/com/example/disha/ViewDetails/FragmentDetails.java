@@ -47,14 +47,14 @@ public class FragmentDetails extends Fragment {
 
     public void Inititalize(){
         placeName.setText(data.getPlaceName());
-        placeDescription.setText(data.getPlaceType()+", "+data.getInfraType()+"\n"+data.getPlacedescription());
+        placeDescription.setText(data.getPlaceType()+", "+data.getInfrastructureType()+"\n"+data.getPlaceDescription());
         placeAddress.setText(data.getAddress());
         contact.setText(data.getPhoneNo());
-        toilet.setText(data.getToilet()+"\n"+"Total Toilets Available: "+data.getNtoilet());
+        toilet.setText(data.getToilet()+"\n"+"Total Toilets Available: "+data.getNo_of_toilet());
         ramp.setText(data.getRamp());
         handrail.setText(data.getHandrail());
         braille.setText(data.getBraille());
-        facilities.setText(data.getPlacedescription());
+        facilities.setText(data.getPlaceDescription());
         lift.setText(data.getLifts());
         wheelchair.setText(data.getWheelchair());
     }

@@ -38,13 +38,20 @@ public class DAOPlaceData {
         return null;
     }
 
-    public UploadTask addImg(Uri filepath, String placeName) {
+    public UploadTask addImg(Uri filepath, String placeName, String sub, String filename) {
         if (filepath != null) {
-            StorageReference ref
-                    = storageReference
-                    .child(
-                            placeName+"/"
-                                    + UUID.randomUUID().toString());
+            StorageReference ref;
+            if(sub == null || sub.equals("")){
+                ref = storageReference
+                        .child(
+                                placeName + "/"
+                                        + UUID.randomUUID().toString());
+            }else{
+                ref = storageReference
+                        .child(
+                                placeName + "/" + sub + "/"
+                                        + filename);
+            }
             return ref.putFile(filepath);
         }
         return null;
