@@ -2,6 +2,7 @@ package com.example.disha.Main.BottomSheet;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -15,6 +16,7 @@ import androidx.appcompat.widget.AppCompatButton;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.AddPlace.data.PlaceData;
 import com.example.disha.R;
+import com.example.disha.Reviews.ActivityReview;
 import com.example.disha.ViewDetails.ViewDetails;
 import com.example.disha.locationModel.Location;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,7 +49,8 @@ public class CustomBottomSheet {
     String[] data = null;
     boolean flag = false;
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
-    private AppCompatButton view_details_btn, directions_btn;
+    private AppCompatButton view_details_btn, reviewBtn;
+    TextView directions_btn;
 
     public CustomBottomSheet(View root, Context context) {
         this.root = root;
@@ -75,8 +78,23 @@ public class CustomBottomSheet {
         bstatus = (TextView) mLayout.findViewById(R.id.business_status);
         view_details_btn = root.findViewById(R.id.view_details_page);
         directions_btn = root.findViewById(R.id.redirect_maps);
+        reviewBtn = root.findViewById(R.id.reviewPlace);
         view_details_btn.setOnClickListener(v -> {
             getAllDetails(place);
+        });
+        reviewBtn.setOnClickListener(v -> {
+            Intent view = new Intent(context, ActivityReview.class);
+            view.putExtra("Place", place.getName());
+            context.startActivity(view);
+        });
+        directions_btn.setOnClickListener(v -> {
+            String lat = String.valueOf(place.getLatLng().latitude);
+            String lng = String.valueOf(place.getLatLng().longitude);
+            String label = "Redirected from DISHA";
+            Uri mapUri = Uri.parse("geo:0,0?q="+lat+","+lng+"("+label+")");
+            Intent mapIntent = new Intent(Intent.ACTION_VIEW, mapUri);
+            mapIntent.setPackage("com.google.android.apps.maps");
+            context.startActivity(mapIntent);
         });
 //        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
     }

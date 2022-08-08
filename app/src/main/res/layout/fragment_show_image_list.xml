@@ -12,6 +12,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:numColumns="3"
-        android:horizontalSpacing="2dp"
-        android:verticalSpacing="2dp"/>
+        android:horizontalSpacing="1dp"
+        android:verticalSpacing="1dp"/>
 </LinearLayout>

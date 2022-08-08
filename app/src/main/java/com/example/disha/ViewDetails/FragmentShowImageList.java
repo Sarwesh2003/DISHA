@@ -53,6 +53,7 @@ public class FragmentShowImageList extends Fragment {
         dialog.show();
         DAOPlaceData dao = new DAOPlaceData();
         list = new ArrayList<>();
+
         StorageReference ref = dao.getStorageReference().child(data.getPlaceName() + "/Display");
         ref.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override

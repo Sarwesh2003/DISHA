@@ -9,10 +9,6 @@
         android:title="Add Place"/>
 
     <item
-        android:id="@+id/survey"
-        android:icon="@drawable/ic_review"
-        android:title="Review Place" />
-    <item
         android:title="Profile">
         <menu>
             <item

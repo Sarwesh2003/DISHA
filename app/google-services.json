@@ -42,6 +42,35 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:489204231107:android:fd3ed65fad37fbc3902b76",
+        "android_client_info": {
+          "package_name": "com.example.disha_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "489204231107-6ristmsr2kfsd18iofije6fdjb4oik0t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8WokYFKRuFu1utp7WoC-Yqx2MKBGvzDI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "489204231107-6ristmsr2kfsd18iofije6fdjb4oik0t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

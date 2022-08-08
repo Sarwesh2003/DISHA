@@ -241,10 +241,6 @@ public class MainController {
                         Intent start_add_place = new Intent(context, PlaceInfo.class);
                         context.startActivity(start_add_place);
                         break;
-                    case R.id.survey:
-                        Intent start_review = new Intent(context, ActivityReview.class);
-                        context.startActivity(start_review);
-                        break;
                     case R.id.view_profile:
                         Toast.makeText(context, "View Profile is Clicked",Toast.LENGTH_SHORT).show();break;
                     case R.id.logout:
@@ -285,8 +281,9 @@ public class MainController {
                 Place.Field.NAME, Place.Field.ID);
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
                 .build(context);
-//        launcher.launch(intent);
-            ShowData(nashik);
+        launcher.launch(intent);
+//            ShowData(nas
+//            hik);
     }
 
 

@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.disha.AddPlace.data.DAOPlaceData;
@@ -27,6 +28,7 @@ import com.google.firebase.storage.ListResult;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class FragmentDetails extends Fragment {
     View root;
@@ -98,7 +100,7 @@ public class FragmentDetails extends Fragment {
             @Override
             public void onSuccess(ListResult listResult) {
                 for(StorageReference img : listResult.getItems()){
-                    if(img.getName().equals("Ramp")){
+                    if(img.getName().toLowerCase(Locale.ROOT).contains("ramp")){
                         rampImg.setVisibility(View.VISIBLE);
                         img.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -107,7 +109,7 @@ public class FragmentDetails extends Fragment {
                             }
                         });
 
-                    }else if(img.getName().equals("Handrail")){
+                    }else if(img.getName().toLowerCase(Locale.ROOT).contains("handrail") ){
                         handrailImg.setVisibility(View.VISIBLE);
                         img.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -115,7 +117,7 @@ public class FragmentDetails extends Fragment {
                                 Glide.with(getContext()).load(uri).into(handrailImg);
                             }
                         });
-                    }else if(img.getName().equals("Lifts")){
+                    }else if(img.getName().toLowerCase(Locale.ROOT).contains("lifts")){
                         liftImg.setVisibility(View.VISIBLE);
                         img.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -123,7 +125,7 @@ public class FragmentDetails extends Fragment {
                                 Glide.with(getContext()).load(uri).into(liftImg);
                             }
                         });
-                    }else if(img.getName().equals("Braille")){
+                    }else if(img.getName().toLowerCase(Locale.ROOT).contains("braille")){
                         brailleImg.setVisibility(View.VISIBLE);
                         img.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -131,7 +133,7 @@ public class FragmentDetails extends Fragment {
                                 Glide.with(getContext()).load(uri).into(brailleImg);
                             }
                         });
-                    }else if(img.getName().equals("Toilet")){
+                    }else if(img.getName().toLowerCase(Locale.ROOT).contains("toilet")){
                         toiletImg.setVisibility(View.VISIBLE);
                         img.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
@@ -139,7 +141,7 @@ public class FragmentDetails extends Fragment {
                                 Glide.with(getContext()).load(uri).into(toiletImg);
                             }
                         });
-                    }else if(img.getName().equals("wheelchair")){
+                    }else if(img.getName().toLowerCase(Locale.ROOT).contains("wheelchair")){
                         wheelchairImg.setVisibility(View.VISIBLE);
                         img.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                             @Override
