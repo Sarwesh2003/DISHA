@@ -1,4 +1,4 @@
-package com.example.disha.ViewDetails.BottomSheet;
+package com.example.disha.Main.BottomSheet;
 
 import android.content.Context;
 import android.content.Intent;

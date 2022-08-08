@@ -10,11 +10,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.disha.R;
 import com.example.disha.Reviews.dataModel.Locations;
+import com.example.disha.Reviews.dataModel.Review;
 
 import java.util.ArrayList;
 
 public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
-    ArrayList<ReviewData> members = new ArrayList<>();
+    ArrayList<Review> members = new ArrayList<>();
     Context context;
 
     public ReviewAdapter(Context context) {
@@ -31,7 +32,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ReviewVH vh = (ReviewVH) holder;
-        ReviewData mem = members.get(position);
+        Review mem = members.get(position);
         String name = mem.getUsername();
         vh.userName.setText(name);
         vh.description.setText(mem.getDescription());
@@ -39,7 +40,7 @@ public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         vh.ratingBar.setRating(Float.parseFloat(mem.getRatings()));
     }
 
-    public void setItems(ArrayList<ReviewData> mem){
+    public void setItems(ArrayList<Review> mem){
         members.addAll(mem);
     }
 

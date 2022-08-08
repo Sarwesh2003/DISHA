@@ -15,7 +15,6 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     PlaceData data;
     public ViewPagerAdapter(@NonNull FragmentManager fm, PlaceData data) {
         super(fm);
-
         this.data = data;
     }
 
@@ -28,15 +27,15 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         }
         else if (position == 1){
             fragment = new FragmentReview(data);
+        }else{
+            fragment = new PlacePhotos(data);
         }
-
-
         return fragment;
     }
 
     @Override
     public int getCount() {
-        return 2;
+        return 3;
     }
 
     @Nullable
@@ -44,9 +43,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         String title = null;
         if (position == 0)
-            title = "Place Details";
+            title = "Details";
         else if (position == 1)
-            title = "Place Reviews";
+            title = "Reviews";
+        else
+            title = "Photos";
         return title;
     }
 }

@@ -21,6 +21,7 @@ import com.example.disha.AddPlace.data.PlaceData;
 import com.example.disha.R;
 import com.example.disha.Reviews.ActivityReview;
 import com.example.disha.Reviews.dataModel.DAOReview;
+import com.example.disha.Reviews.dataModel.Review;
 import com.example.disha.ViewDetails.data.ReviewAdapter;
 import com.example.disha.ViewDetails.data.ReviewData;
 import com.google.firebase.database.DataSnapshot;
@@ -40,7 +41,7 @@ public class FragmentReview extends Fragment {
 
     ProgressBar progressBar;
     AppCompatButton btn_review;
-    ArrayList<ReviewData> list;
+    ArrayList<Review> list;
     private ReviewAdapter adapter;
 
     public FragmentReview(PlaceData data) {
@@ -72,15 +73,29 @@ public class FragmentReview extends Fragment {
     private void loadData(){
         Query retquery = dao.getReference().orderByChild("placeName").equalTo(data.getPlaceName());
         retquery.addListenerForSingleValueEvent(new ValueEventListener() {
-            ArrayList<ReviewData> arr = new ArrayList<>();
+            ArrayList<Review> arr = new ArrayList<>();
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()) {
                     for (DataSnapshot s : snapshot.getChildren()) {
-                        arr.add(new ReviewData(s.child("username").getValue(String.class),
+                        arr.add(new Review(s.child("placeName").getValue(String.class),
+                                s.child("username").getValue(String.class),
                                 s.child("date").getValue(String.class),
                                 s.child("description").getValue(String.class),
-                                s.child("ratings").getValue(String.class)));
+                                s.child("ratings").getValue(String.class),
+                                s.child("ramp").getValue(String.class),
+                                s.child("rampDescription").getValue(String.class),
+                                s.child("handrail").getValue(String.class),
+                                s.child("handrailDescription").getValue(String.class),
+                                s.child("braille").getValue(String.class),
+                                s.child("brailleDescription").getValue(String.class),
+                                s.child("lifts").getValue(String.class),
+                                s.child("liftsDescription").getValue(String.class),
+                                s.child("wheelchair").getValue(String.class),
+                                s.child("wheelchairDescription").getValue(String.class),
+                                s.child("toilet").getValue(String.class),
+                                s.child("ntoilet").getValue(String.class),
+                                s.child("toiletDescription").getValue(String.class)));
                     }
                     adapter.setItems(arr);
                     list.addAll(arr);

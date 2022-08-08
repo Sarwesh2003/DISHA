@@ -14,7 +14,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp">
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -33,6 +32,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -55,6 +55,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Address"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -62,6 +63,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
+                    android:textSize="18sp"
                     android:text=""
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
@@ -85,6 +87,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="About Place"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -93,6 +96,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -115,6 +119,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Contact"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -123,12 +128,14 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
+
         <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card11"
+            android:id="@+id/card5"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/card4"
@@ -139,40 +146,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Facilities Description"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
-
-                <TextView
-                    android:id="@+id/facilities"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:text=""
-                    android:textAppearance="?attr/textAppearanceBody2"
-                    android:textColor="?android:attr/textColorSecondary" />
-            </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/card5"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card11"
-            android:layout_margin="8dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="8dp">
-
+                <ImageView
+                    android:id="@+id/ramp_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Ramp Facility"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -181,6 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -198,12 +183,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
-
+                <ImageView
+                    android:id="@+id/handrail_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Handrail Facility"
-                    android:textAppearance="?attr/textAppearanceHeadline6" />
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:textSize="18sp"/>
 
                 <TextView
                     android:id="@+id/handrailFacility"
@@ -211,6 +202,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -228,11 +220,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
-
+                <ImageView
+                    android:id="@+id/toilets_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Toilets"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -241,6 +239,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -258,11 +257,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
-
+                <ImageView
+                    android:id="@+id/braille_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Braille Availability"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -271,6 +276,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -287,11 +293,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
-
+                <ImageView
+                    android:id="@+id/lifts_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Lifts Availability"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -300,6 +312,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>
@@ -317,11 +330,17 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="8dp">
-
+                <ImageView
+                    android:id="@+id/wheelchair_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:visibility="gone"
+                    android:scaleType="fitXY"/>
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Wheelchairs"
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceHeadline6" />
 
                 <TextView
@@ -330,6 +349,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:text=""
+                    android:textSize="18sp"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textColor="?android:attr/textColorSecondary" />
             </LinearLayout>

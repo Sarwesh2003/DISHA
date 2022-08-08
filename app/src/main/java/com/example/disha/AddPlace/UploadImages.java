@@ -73,12 +73,14 @@ public class UploadImages extends Fragment {
                                 // adding imageuri in array
                                 Uri imageurl = mClipData.getItemAt(i).getUri();
                                 list.add(imageurl);
+                                mainImg.setText("Images Selected: "+list.size());
                             }
                             position = 0;
                         } else {
                             Uri imageurl = data.getData();
                             list.add(imageurl);
                             position = 0;
+                            mainImg.setText("Images Selected: "+list.size());
                         }
                     }else{
                         Toast.makeText(getContext(), "No Image Selected", Toast.LENGTH_SHORT).show();
