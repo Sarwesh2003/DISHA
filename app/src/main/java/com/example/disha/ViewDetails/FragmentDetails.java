@@ -1,12 +1,14 @@
 package com.example.disha.ViewDetails;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +38,8 @@ public class FragmentDetails extends Fragment {
     TextView placeName, placeDescription, placeAddress, contact, toilet, ramp, handrail, braille, facilities, lift, wheelchair;
     ImageView rampImg, handrailImg, brailleImg, liftImg, wheelchairImg, toiletImg;
     DAOPlaceData dao;
+    private TextToSpeech ttobj;
+
     public FragmentDetails(PlaceData data) {
         dao = new DAOPlaceData();
         this.data = data;
@@ -163,5 +167,27 @@ public class FragmentDetails extends Fragment {
                 progress.dismiss();
             }
         });
+        SharedPreferences settings = getActivity().getSharedPreferences("Settings", 0);
+        boolean silent = settings.getBoolean("audio", true);
+        if(silent){
+            ttobj = new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if(status != TextToSpeech.ERROR){
+                        ttobj.setLanguage(Locale.ROOT);
+                        ttobj.setSpeechRate(0.7f);
+                        ttobj.speak("Currently Viewing "+data.getPlaceName(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Ramp Facility "+data.getRamp(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Handrail Facility "+data.getHandrail(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Toilets Facility "+data.getToilet(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Total Number of Toilets "+data.getNo_of_toilet(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Braille Facility "+data.getBraille(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Lifts Facility "+data.getLifts(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Wheelchair Facility "+data.getWheelchair(), TextToSpeech.QUEUE_ADD,null);
+                    }
+                }
+            });
+        }
+
     }
 }

@@ -2,6 +2,7 @@ package com.example.disha.Main;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,10 +10,16 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Parcel;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -21,9 +28,11 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.FragmentActivity;
 
 import com.example.disha.AddPlace.PlaceInfo;
 import com.example.disha.AddPlace.data.DAOPlaceData;
@@ -33,6 +42,8 @@ import com.example.disha.Reviews.ActivityReview;
 import com.example.disha.Main.BottomSheet.CustomBottomSheet;
 import com.example.disha.locationModel.Location;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -40,11 +51,21 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AddressComponents;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.LocationRestriction;
 import com.google.android.libraries.places.api.model.OpeningHours;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.model.PlusCode;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -55,6 +76,7 @@ import com.google.firebase.auth.FirebaseUser;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -67,11 +89,15 @@ public class MainController {
     private FloatingActionButton refresh;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private EditText search;
+    private AutoCompleteTextView search;
     private FirebaseUser user;
     private Bitmap profileImg;
     private ImageButton menu_btn, voice_btn;
-    private ActivityResultLauncher<Intent> launcher;
+    private ActivityResultLauncher<Intent> launcher, audioLauncher;
+    SpeechRecognizer speechRecognizer;
+    TextToSpeech ttobj;
+    boolean isListening = false;
+
     private AppCompatButton view_details_btn, directions_btn;
     Place nashik = new Place() {
         @Nullable
@@ -204,8 +230,9 @@ public class MainController {
 
         }
     };
+    private PlacesClient placeClient;
 
-    public MainController(Context context, View root, ActivityResultLauncher<Intent> launcher) {
+    public MainController(Context context, View root, ActivityResultLauncher<Intent> launcher, ActivityResultLauncher<Intent> audiolauncher) {
         this.context = context;
         this.root = root;
         this.launcher = launcher;
@@ -214,6 +241,10 @@ public class MainController {
         daoPlaceData = new DAOPlaceData();
         location = new Location(context, R.id.map_fragment);
         user = FirebaseAuth.getInstance().getCurrentUser();
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
+        this.audioLauncher = audiolauncher;
+
+        placeClient = Places.createClient(context);
     }
     public void init(){
         drawerLayout = root.findViewById(R.id.drawer_layout);
@@ -227,8 +258,16 @@ public class MainController {
         search.setFocusable(false);
         profileImg = drawableToBitmap(context.getDrawable(R.drawable.ic_profile));
         getPhoto();
+        speak();
         menu_btn.setOnClickListener(v -> handleMenu());
-        voice_btn.setOnClickListener(v -> handleVoice());
+
+        voice_btn.setOnClickListener(v -> {
+            Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            i.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN");
+            audioLauncher.launch(i);
+        });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -242,8 +281,13 @@ public class MainController {
                         context.startActivity(start_add_place);
                         break;
                     case R.id.view_profile:
-                        Toast.makeText(context, "View Profile is Clicked",Toast.LENGTH_SHORT).show();break;
-                    case R.id.logout:
+                        Toast.makeText(context, "View Profile is Clicked",Toast.LENGTH_SHORT).show();
+                        break;
+                    case R.id.settings:
+                        Intent start_settings = new Intent(context, Settings.class);
+                        context.startActivity(start_settings);
+                        break;
+                        case R.id.logout:
                         signout();
                         break;
                     case R.id.share:
@@ -267,7 +311,25 @@ public class MainController {
         });
         search.setOnClickListener(v -> handleSearch());
         refresh.setOnClickListener(v -> handleRefresh());
+    }
 
+    public void speak(){
+        SharedPreferences settings = context.getSharedPreferences("Settings", 0);
+        boolean silent = settings.getBoolean("audio", true);
+        if(!silent)
+            return;
+        ttobj = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+                if(status != TextToSpeech.ERROR){
+                    ttobj.setLanguage(Locale.ENGLISH);
+                    ttobj.setSpeechRate(0.7f);
+                    ttobj.speak("You are on the main screen and your current address is"
+                            + location.getCityStateCountry(location.getMyLocation()), TextToSpeech.QUEUE_ADD,null);
+                }
+            }
+        });
     }
 
     private void handleRefresh() {
@@ -280,16 +342,13 @@ public class MainController {
         List<Place.Field> fieldList = Arrays.asList(Place.Field.ADDRESS, Place.Field.LAT_LNG,
                 Place.Field.NAME, Place.Field.ID);
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fieldList)
-                .build(context);
+                .build(context );
         launcher.launch(intent);
-//            ShowData(nas
-//            hik);
+//        ShowData(nashik);
+
     }
 
 
-    private void handleVoice() {
-        Toast.makeText(context, "Voice Clicked", Toast.LENGTH_SHORT).show();
-    }
     private void ShowData(Place placeData) {
         sheet.setState(BottomSheetBehavior.STATE_EXPANDED);
         location.RemoveAllMarkers();
@@ -299,6 +358,7 @@ public class MainController {
         sheet.setData();
     }
     private void handleMenu() {
+
         FirebaseUser finalUser = user;
         drawerLayout.openDrawer(GravityCompat.START);
         TextView user_name = navigationView.findViewById(R.id.user_name);
@@ -322,7 +382,6 @@ public class MainController {
             img.setImageBitmap(profileImg);
         }
     }
-
     public void checkUser(){
 
         if(user == null){

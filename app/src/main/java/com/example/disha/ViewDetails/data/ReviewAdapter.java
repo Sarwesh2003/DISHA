@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.transition.AutoTransition;
+import androidx.transition.TransitionManager;
 
 import com.example.disha.R;
 import com.example.disha.Reviews.dataModel.Locations;
@@ -38,6 +40,25 @@ public class ReviewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         vh.description.setText(mem.getDescription());
         vh.date.setText(mem.getDate());
         vh.ratingBar.setRating(Float.parseFloat(mem.getRatings()));
+        vh.arrow_btn.setOnClickListener(v -> {
+            if(vh.layout.getVisibility() == View.VISIBLE){
+                TransitionManager.beginDelayedTransition(vh.cv,
+                        new AutoTransition());
+                vh.layout.setVisibility(View.GONE);
+                vh.arrow_btn.setImageResource(R.drawable.ic_arrow_down);
+            }else{
+                TransitionManager.beginDelayedTransition(vh.cv,
+                        new AutoTransition());
+                vh.layout.setVisibility(View.VISIBLE);
+                vh.ramp.setText(mem.getRamp() + "\n" + mem.getRampDescription());
+                vh.braille.setText(mem.getBraille() + "\n" + mem.getBraille());
+                vh.handrail.setText(mem.getHandrail() + "\n" + mem.getHandrail());
+                vh.wheelchair.setText(mem.getWheelchair() + "\n" + mem.getWheelchair());
+                vh.lifts.setText(mem.getLifts() + "\n" + mem.getLiftsDescription());
+                vh.toilets.setText(mem.getToilet() + "\n" + "No. of Toilets: " + mem.getNtoilet() + "\n" + mem.getToiletDescription());
+                vh.arrow_btn.setImageResource(R.drawable.ic_arrow_up);
+            }
+        });
     }
 
     public void setItems(ArrayList<Review> mem){

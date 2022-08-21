@@ -9,10 +9,12 @@ import android.Manifest;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -27,48 +29,81 @@ import com.firebase.ui.auth.IdpResponse;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionDeniedResponse;
 import com.karumi.dexter.listener.PermissionGrantedResponse;
 import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.karumi.dexter.listener.single.PermissionListener;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class Permission extends AppCompatActivity {
     private Button btnGrant, btnSignIn;
-
+    TextToSpeech ttobj;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_permission);
         btnGrant = findViewById(R.id.btn_grant);
         btnSignIn = findViewById(R.id.btn_sign_in);
-        if(ContextCompat.checkSelfPermission(Permission.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+        btnSignIn.setEnabled(false);
+        SharedPreferences settings = getSharedPreferences("Settings", 0);
+        boolean silent = settings.getBoolean("audio", true);
+        if(silent){
+            ttobj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if(status != TextToSpeech.ERROR){
+                        ttobj.setLanguage(Locale.ENGLISH);
+                        ttobj.setSpeechRate(0.7f);
+                        ttobj.speak("Welcome To Disha", TextToSpeech.QUEUE_ADD,null);
+                    }
+                }
+            });
+        }
+
+        if(ContextCompat.checkSelfPermission(Permission.this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        && ContextCompat.checkSelfPermission(Permission.this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED){
             btnGrant.setText("Permission Granted");
+            if(silent){
+                ttobj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                    @Override
+                    public void onInit(int status) {
+                        if(status != TextToSpeech.ERROR){
+                            ttobj.setLanguage(Locale.ENGLISH);
+                            ttobj.setSpeechRate(0.7f);
+                            ttobj.speak("Permissions are granted move to sign-in", TextToSpeech.QUEUE_ADD,null);
+                        }
+                    }
+                });
+            }
             btnGrant.setEnabled(false);
+            btnSignIn.setEnabled(true);
         }
         FacebookSdk.setClientToken(getString(R.string.facebook_client_token));
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
-        btnGrant.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Dexter.withContext(Permission.this)
-                        .withPermission(Manifest.permission.ACCESS_FINE_LOCATION)
-                        .withListener(new PermissionListener() {
-                            @Override
-                            public void onPermissionGranted(PermissionGrantedResponse permissionGrantedResponse) {
+
+        btnGrant.setOnClickListener(v -> {
+            Dexter.withContext(Permission.this)
+                        .withPermissions(Manifest.permission.ACCESS_FINE_LOCATION,
+                                Manifest.permission.RECORD_AUDIO)
+                    .withListener(new MultiplePermissionsListener() {
+                        @Override
+                        public void onPermissionsChecked(MultiplePermissionsReport multiplePermissionsReport) {
+                            if(multiplePermissionsReport.areAllPermissionsGranted()){
                                 btnGrant.setText("Permission Granted");
                                 btnGrant.setEnabled(false);
-                            }
-                            @Override
-                            public void onPermissionDenied(PermissionDeniedResponse permissionDeniedResponse) {
-                                if(permissionDeniedResponse.isPermanentlyDenied()){
+                                btnSignIn.setEnabled(true);
+                            }else{
+                                if(multiplePermissionsReport.isAnyPermissionPermanentlyDenied()){
                                     AlertDialog.Builder builder = new AlertDialog.Builder(Permission.this);
                                     builder.setTitle("Permission Denied")
-                                            .setMessage("Permission to access device location is permanently denied. you need to go to setting to allow the permission.")
+                                            .setMessage("Permissions are permanently denied. you need to go to setting to allow the permission.")
                                             .setNegativeButton("Cancel", null)
                                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                                 @Override
@@ -83,15 +118,15 @@ public class Permission extends AppCompatActivity {
                                     Toast.makeText(Permission.this, "Permission Denied", Toast.LENGTH_SHORT).show();
                                 }
                             }
-
-                            @Override
-                            public void onPermissionRationaleShouldBeShown(PermissionRequest permissionRequest, PermissionToken permissionToken) {
-                                permissionToken.continuePermissionRequest();
-                            }
-                        })
-                        .check();
-            }
+                        }
+                        @Override
+                        public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
+                            permissionToken.continuePermissionRequest();
+                        }
+                    }).onSameThread()
+                    .check();
         });
+
         btnSignIn.setOnClickListener(v->{
             if(FirebaseAuth.getInstance().getCurrentUser()!=null){
                 Intent startMain = new Intent(Permission.this, MainActivity.class);

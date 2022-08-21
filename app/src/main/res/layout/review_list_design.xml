@@ -2,47 +2,248 @@
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:id="@+id/base_cv"
     android:elevation="8dp"
     android:layout_margin="4dp">
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-        <RatingBar
-            android:id="@+id/rating"
-            style="@android:style/Widget.Material.RatingBar.Indicator"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/layout_review_details"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numStars="5"
-            android:rating="1"
-            android:stepSize="0.5" />
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:layout_toStartOf="@+id/arrow_btn"
+            android:layout_alignParentStart="true">
 
-        <TextView
-            android:id="@+id/username"
+            <RatingBar
+                android:id="@+id/rating"
+                style="@android:style/Widget.Material.RatingBar.Indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:numStars="5"
+                android:rating="1"
+                android:stepSize="0.5" />
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Username Name"
+                android:textAppearance="?attr/textAppearanceHeadline6" />
+
+            <TextView
+                android:id="@+id/dateVisited"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Date Visited"
+                android:textStyle="bold"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text=""
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/arrow_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Username Name"
-            android:textAppearance="?attr/textAppearanceHeadline6" />
-
-        <TextView
-            android:id="@+id/dateVisited"
-            android:layout_width="wrap_content"
+            android:src="@drawable/ic_arrow_down"
+            android:layout_alignParentEnd="true"/>
+        <RelativeLayout
+            android:id="@+id/hiddenView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text="Date Visited"
-            android:textStyle="bold"
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="?android:attr/textColorSecondary" />
+            android:layout_below="@+id/layout_review_details"
+            android:padding="8dp"
+            android:visibility="gone">
 
-        <TextView
-            android:id="@+id/description"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:text=""
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="?android:attr/textColorSecondary" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/tRamp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="8dp"
+                android:text="Ramps:"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary" />
+            <TextView
+                android:id="@+id/avlRamps"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Des"
+                android:gravity="end"
+                android:layout_toEndOf="@+id/tRamp"
+                android:layout_alignParentEnd="true"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <View
+                android:id="@+id/middleLine"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginTop="4dp"
+                android:background="@color/grey_10"
+                android:layout_below="@+id/avlRamps"/>
+            <TextView
+                android:id="@+id/tHandrail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/middleLine"
+                android:layout_marginTop="8dp"
+                android:text="Handrail"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <TextView
+                android:id="@+id/avlHandrail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Des"
+                android:gravity="end"
+                android:layout_toEndOf="@+id/tHandrail"
+                android:layout_below="@+id/middleLine"
+                android:layout_alignParentEnd="true"
+
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <View
+                android:id="@+id/middleLine1"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginTop="4dp"
+                android:background="@color/grey_10"
+                android:layout_below="@+id/avlHandrail"/>
+            <TextView
+                android:id="@+id/tToilet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/middleLine1"
+                android:layout_marginTop="8dp"
+                android:text="Toilet"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <TextView
+                android:id="@+id/avlToilet"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Des"
+                android:layout_toEndOf="@+id/tToilet"
+                android:gravity="end"
+                android:layout_below="@+id/middleLine1"
+                android:layout_alignParentEnd="true"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <View
+                android:id="@+id/middleLine2"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginTop="4dp"
+                android:background="@color/grey_10"
+                android:layout_below="@+id/avlToilet"/>
+
+            <TextView
+                android:id="@+id/tBraille"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/middleLine2"
+                android:layout_marginTop="8dp"
+                android:text="Braille"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <TextView
+                android:id="@+id/avlBraille"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Des"
+                android:layout_toEndOf="@+id/tBraille"
+                android:layout_below="@+id/middleLine2"
+                android:gravity="end"
+                android:layout_alignParentEnd="true"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <View
+                android:id="@+id/middleLine3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginTop="4dp"
+                android:background="@color/grey_10"
+                android:layout_below="@+id/avlBraille"/>
+            <TextView
+                android:id="@+id/tLifts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/middleLine3"
+                android:layout_marginTop="8dp"
+                android:text="Lifts"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <TextView
+                android:id="@+id/avlLifts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Des"
+                android:layout_toEndOf="@+id/tLifts"
+                android:gravity="end"
+                android:layout_below="@+id/middleLine3"
+                android:layout_alignParentEnd="true"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <View
+                android:id="@+id/middleLine4"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginStart="@dimen/spacing_large"
+                android:layout_marginLeft="@dimen/spacing_medium"
+                android:layout_marginEnd="@dimen/spacing_large"
+                android:layout_marginTop="4dp"
+                android:background="@color/grey_10"
+                android:layout_below="@+id/avlLifts"/>
+            <TextView
+                android:id="@+id/tWheelchair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/middleLine4"
+                android:layout_marginTop="8dp"
+                android:text="Wheelchair"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+            <TextView
+                android:id="@+id/avlWheelchair"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Des"
+                android:layout_toEndOf="@+id/tWheelchair"
+                android:gravity="end"
+                android:layout_below="@+id/middleLine4"
+                android:layout_alignParentEnd="true"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"/>
+        </RelativeLayout>
+    </RelativeLayout>
+
 </com.google.android.material.card.MaterialCardView>

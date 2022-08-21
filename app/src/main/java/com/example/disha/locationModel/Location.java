@@ -9,6 +9,7 @@ import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -163,7 +164,26 @@ public class Location {
         }
         return strAdd;
     }
-
+    public String getCityStateCountry(LatLng latLng){
+        String strAdd = " ";
+        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+        try {
+            List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                strAdd += returnedAddress.getSubLocality() + " ";
+                strAdd += returnedAddress.getSubAdminArea() + "";
+                strAdd += returnedAddress.getAdminArea() + " ";
+                strAdd += returnedAddress.getCountryName();
+            } else {
+                return "No Address Found";
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Something went wrong";
+        }
+        return strAdd;
+    }
     public void getPlace(String loc){
         supportMapFragment.getMapAsync(new OnMapReadyCallback() {
             @Override

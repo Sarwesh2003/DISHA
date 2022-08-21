@@ -2,7 +2,9 @@ package com.example.disha.Main.BottomSheet;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -36,6 +38,7 @@ import com.google.maps.android.SphericalUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class CustomBottomSheet {
     LinearLayout mLayout;
@@ -51,7 +54,8 @@ public class CustomBottomSheet {
     private BottomSheetBehavior<LinearLayout> bottomSheetBehavior;
     private AppCompatButton view_details_btn, reviewBtn;
     TextView directions_btn;
-
+    private TextToSpeech ttobj ;
+    double dis = 0.0;
     public CustomBottomSheet(View root, Context context) {
         this.root = root;
         this.context = context;
@@ -96,7 +100,24 @@ public class CustomBottomSheet {
             mapIntent.setPackage("com.google.android.apps.maps");
             context.startActivity(mapIntent);
         });
-//        bottomSheetBehavior.setState(BottomSheetBehavior.STATE_HALF_EXPANDED);
+        SharedPreferences settings = context.getSharedPreferences("Settings", 0);
+        boolean silent = settings.getBoolean("audio", true);
+        if(silent){
+            ttobj = new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+
+                    if(status != TextToSpeech.ERROR){
+                        ttobj.setLanguage(Locale.ENGLISH);
+                        ttobj.setSpeechRate(0.7f);
+                        ttobj.speak("Place Details are Visible Place is "+place.getName(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Place Ratings are "+place.getRating(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Distance is "+String.format("%.2f", dis / 1000)+" Kilometers", TextToSpeech.QUEUE_ADD,null);
+                    }
+                }
+            });
+        }
+
     }
 
     private void getAllDetails(Place place) {
@@ -117,32 +138,6 @@ public class CustomBottomSheet {
                 Toast.makeText(context, "Something went wrong. Try Again", Toast.LENGTH_SHORT).show();
             }
         });
-
-//        daoPlaceData.getReference().addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot root) {
-//                if(root.exists()){
-//                    boolean flag = false;
-//                    for(DataSnapshot snapshot : root.getChildren()){
-//                        String child = snapshot.child("placeName").getValue(String.class);
-//                        if(child.equals(place.getName())){
-//                            PlaceData data = snapshot.getValue(PlaceData.class);
-//                            flag = true;
-//                            detailsFetched(data, true);
-//                        }
-//                    }
-//                    if(!flag){
-//                        detailsFetched(null, false);
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(context, "Error Occurred", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-
     }
 
     private void detailsFetched(boolean flg) {
@@ -164,7 +159,7 @@ public class CustomBottomSheet {
     public void setData() {
         placeName.setText(place.getName());
         address.setText(place.getAddress());
-        double dis = 0.0;
+
         if (place.getLatLng() != null){
             dis = SphericalUtil.computeDistanceBetween(location.getMyLocation(), place.getLatLng());
             distance.setText(String.format("%.2f", dis / 1000) + " km");
@@ -209,8 +204,6 @@ public class CustomBottomSheet {
             if(status != null){
                 bstatus.setText(customToString(status.toString()));
             }
-//            Log.d("Returned", String.valueOf(place.getTypes()));
-//            Log.d("Returned", String.valueOf(place.getBusinessStatus()));
         }).addOnFailureListener(e -> Toast.makeText(context, "Failed to get data", Toast.LENGTH_SHORT).show());
 
     }

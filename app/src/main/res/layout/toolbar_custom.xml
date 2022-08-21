@@ -27,7 +27,7 @@
             android:orientation="vertical"
             app:layout_constraintGuide_percent="0.10" />
 
-        <EditText
+        <AutoCompleteTextView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/searchEdit"
