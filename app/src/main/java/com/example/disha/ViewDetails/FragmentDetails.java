@@ -68,8 +68,13 @@ public class FragmentDetails extends Fragment {
         wheelchairImg = root.findViewById(R.id.wheelchair_image);
         if(data != null)
             Inititalize();
-
+        else
+            DataNotAvailable();
         return root;
+    }
+
+    private void DataNotAvailable() {
+
     }
 
     public void Inititalize(){

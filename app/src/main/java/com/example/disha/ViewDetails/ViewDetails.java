@@ -48,7 +48,6 @@ public class ViewDetails extends AppCompatActivity {
     private void LoadData(String place) {
         Query retquery = dao.getReference().orderByChild("placeName").equalTo(place);
         PlaceData data  = new PlaceData();
-        DAOReview review = new DAOReview();
         retquery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -80,22 +79,7 @@ public class ViewDetails extends AppCompatActivity {
                             getSupportFragmentManager(), data);
 
                 }else{
-                    Query getReview = review.getReference().orderByChild("placeName").equalTo(place);
-                    getReview.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if(snapshot.exists()){
 
-                            }else{
-
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
                 }
                 viewPager.setAdapter(viewPagerAdapter);
                 // It is used to join TabLayout with ViewPager.
