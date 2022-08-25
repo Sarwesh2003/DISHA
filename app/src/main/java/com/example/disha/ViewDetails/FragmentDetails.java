@@ -70,14 +70,17 @@ public class FragmentDetails extends Fragment {
             Inititalize();
         else
             DataNotAvailable();
+
         return root;
     }
 
     private void DataNotAvailable() {
 
+        Toast.makeText(getContext(), "Here", Toast.LENGTH_SHORT).show();
     }
 
     public void Inititalize(){
+
         ProgressDialog progress = new ProgressDialog(getContext());
         progress.setMessage("Getting Information");
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
@@ -85,25 +88,52 @@ public class FragmentDetails extends Fragment {
         progress.setCanceledOnTouchOutside(false);
         progress.show();
         placeName.setText(data.getPlaceName());
-        placeDescription.setText(data.getPlaceType()+", "+data.getInfrastructureType()+"\n"+data.getPlaceDescription());
+        if(data.getPlaceType() != null && (!data.getPlaceType().isEmpty()))
+            placeDescription.setText(data.getPlaceType()+", ");
+        if(data.getInfrastructureType() != null)
+            placeDescription.setText(placeDescription.getText() + data.getInfrastructureType()+"\n");
+        if(data.getPlaceDescription() != null)
+            placeDescription.setText(placeDescription.getText() + data.getPlaceDescription());
+
+        if(placeDescription.getText().toString().isEmpty())
+            placeDescription.setText("Details Not Available");
+
         placeAddress.setText(data.getAddress());
         contact.setText(data.getPhoneNo());
-        toilet.setText(data.getToilet()+"\n"+"Total Toilets Available: "+data.getNo_of_toilet()+"\n"+data.getToiletDescription());
-        ramp.setText(data.getRamp() + "\n" + data.getRampDescription());
-        handrail.setText(data.getHandrail() + "\n" + data.getHandrailDescription());
-        braille.setText(data.getBraille() + "\n" + data.getBrailleDescription());
-        lift.setText(data.getLifts() + "\n" +data.getLiftsDescription());
-        wheelchair.setText(data.getWheelchair() + "\n" + data.getWheelchairDescription());
+        if(contact.getText().toString().isEmpty()){
+            contact.setText("Phone No. Available");
+        }
+        if(data.getToilet() != null)
+            toilet.setText(data.getToilet());
+        if(data.getNo_of_toilet() != null)
+            toilet.setText("\nTotal Toilets Available: "+data.getNo_of_toilet()+"\n"+data.getToiletDescription());
+        if(data.getToiletDescription() != null)
+            toilet.setText(toilet.getText() + "\n" + data.getToiletDescription());
 
-//        progress.setIndeterminate(true);
-//        StorageReference rampRef = dao.getStorageReference().child(data.getPlaceName() + "/Facilities/Ramp");
-//        rampRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                rampImg.setVisibility(View.VISIBLE);
-//                Glide.with(getContext()).load(uri).into(rampImg);
-//            }
-//        });
+        if(data.getRamp() != null)
+            ramp.setText(data.getRamp() + "\n" + data.getRampDescription());
+        else
+            ramp.setText("Data not available");
+
+        if(data.getHandrail() != null)
+            handrail.setText(data.getHandrail() + "\n" + data.getHandrailDescription());
+        else
+            handrail.setText("Data not available");
+
+        if(data.getBraille() != null)
+            braille.setText(data.getBraille() + "\n" + data.getBrailleDescription());
+        else
+            braille.setText("Data not available");
+
+        if(data.getLifts() != null)
+            lift.setText(data.getLifts() + "\n" +data.getLiftsDescription());
+        else
+            lift.setText("Data not available");
+
+        if(wheelchair.getText() != null)
+            wheelchair.setText(data.getWheelchair() + "\n" + data.getWheelchairDescription());
+        else
+            wheelchair.setText("Data not available");
         StorageReference rampRef = dao.getStorageReference().child(data.getPlaceName() + "/Facilities");
         rampRef.listAll().addOnSuccessListener(new OnSuccessListener<ListResult>() {
             @Override
@@ -181,7 +211,7 @@ public class FragmentDetails extends Fragment {
                     if(status != TextToSpeech.ERROR){
                         ttobj.setLanguage(Locale.ROOT);
                         ttobj.setSpeechRate(0.7f);
-                        ttobj.speak("Currently Viewing "+data.getPlaceName(), TextToSpeech.QUEUE_ADD,null);
+                        ttobj.speak("Currently Viewing "+data.getPlaceName(), TextToSpeech.QUEUE_FLUSH,null);
                         ttobj.speak("Ramp Facility "+data.getRamp(), TextToSpeech.QUEUE_ADD,null);
                         ttobj.speak("Handrail Facility "+data.getHandrail(), TextToSpeech.QUEUE_ADD,null);
                         ttobj.speak("Toilets Facility "+data.getToilet(), TextToSpeech.QUEUE_ADD,null);

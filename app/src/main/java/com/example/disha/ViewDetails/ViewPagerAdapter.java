@@ -1,7 +1,9 @@
 package com.example.disha.ViewDetails;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,9 +15,11 @@ import com.example.disha.AddPlace.data.PlaceData;
 
 public class ViewPagerAdapter extends FragmentPagerAdapter {
     PlaceData data;
-    public ViewPagerAdapter(@NonNull FragmentManager fm, PlaceData data) {
+    Context context;
+    public ViewPagerAdapter(@NonNull FragmentManager fm, PlaceData data, Context context) {
         super(fm);
         this.data = data;
+        this.context = context;
     }
 
     @NonNull

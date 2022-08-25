@@ -171,7 +171,8 @@ public class Location {
             List<Address> addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             if (addresses != null) {
                 Address returnedAddress = addresses.get(0);
-                strAdd += returnedAddress.getSubLocality() + " ";
+                if(returnedAddress.getSubLocality() != null)
+                    strAdd += returnedAddress.getSubLocality() + " ";
                 strAdd += returnedAddress.getSubAdminArea() + "";
                 strAdd += returnedAddress.getAdminArea() + " ";
                 strAdd += returnedAddress.getCountryName();
@@ -180,6 +181,7 @@ public class Location {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.d("Myaddr", e.getMessage());
             return "Something went wrong";
         }
         return strAdd;
@@ -233,6 +235,10 @@ public class Location {
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
     public LatLng getMyLocation(){
+        if(myLocation != null)
+            return myLocation;
+        else
+            StartLocationService();
         return myLocation;
     }
 

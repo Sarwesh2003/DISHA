@@ -8,6 +8,7 @@ import androidx.viewpager.widget.ViewPager;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -15,17 +16,27 @@ import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.AddPlace.data.PlaceData;
 import com.example.disha.R;
 import com.example.disha.Reviews.dataModel.DAOReview;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.net.FetchPlaceRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.material.tabs.TabLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class ViewDetails extends AppCompatActivity {
     TabLayout tabLayout;
     ViewPager viewPager;
     ViewPagerAdapter viewPagerAdapter;
     DAOPlaceData dao;
+    private PlacesClient placesClient;
+    String placeId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,13 +47,14 @@ public class ViewDetails extends AppCompatActivity {
         toolbar.setNavigationOnClickListener(v -> {
             onBackPressed();
         });
+        placesClient = Places.createClient(ViewDetails.this);
         dao = new DAOPlaceData();
         Bundle b = getIntent().getExtras();
         boolean dataAvailable = b.getBoolean("PlaceFound");
-        if(dataAvailable){
+        placeId = b.getString("PlaceId");
+//        if(dataAvailable){
             String placeName = b.getString("PlaceName");
             LoadData(placeName);
-        }
     }
 
     private void LoadData(String place) {
@@ -76,14 +88,38 @@ public class ViewDetails extends AppCompatActivity {
                         data.setWheelchairDescription(element.child("wheelchairDescription").getValue(String.class));
                     }
                     viewPagerAdapter = new ViewPagerAdapter(
-                            getSupportFragmentManager(), data);
-
+                            getSupportFragmentManager(), data, getApplicationContext());
+                    viewPager.setAdapter(viewPagerAdapter);
+                    // It is used to join TabLayout with ViewPager.
+                    tabLayout.setupWithViewPager(viewPager);
                 }else{
+                    List<Place.Field> fieldList = Arrays.asList(Place.Field.NAME,Place.Field.PHONE_NUMBER, Place.Field.ADDRESS);
+                    final FetchPlaceRequest request = FetchPlaceRequest.newInstance(placeId, fieldList);
+
+                    placesClient.fetchPlace(request).addOnSuccessListener(fetchPlaceResponse -> {
+                        Place place = fetchPlaceResponse.getPlace();
+                        if(place.getPhoneNumber() != null)
+                            data.setPhoneNo(place.getPhoneNumber());
+                        else
+                            data.setPhoneNo("Not Available");
+
+                        Place.BusinessStatus status = place.getBusinessStatus();
+                        if(status != null){
+                            data.setPlaceDescription(customToString(status.toString()));
+                        }
+                        data.setPlaceName(place.getName());
+                        data.setAddress(place.getAddress());
+                        data.setPlaceType("");
+                        data.setInfrastructureType("");
+
+                        viewPagerAdapter = new ViewPagerAdapter(
+                                getSupportFragmentManager(), data, getApplicationContext());
+                        viewPager.setAdapter(viewPagerAdapter);
+                        // It is used to join TabLayout with ViewPager.
+                        tabLayout.setupWithViewPager(viewPager);
+                    }).addOnFailureListener(e -> Toast.makeText(ViewDetails.this, "Failed to get data", Toast.LENGTH_SHORT).show());
 
                 }
-                viewPager.setAdapter(viewPagerAdapter);
-                // It is used to join TabLayout with ViewPager.
-                tabLayout.setupWithViewPager(viewPager);
             }
 
             @Override
@@ -91,5 +127,14 @@ public class ViewDetails extends AppCompatActivity {
                 Toast.makeText(ViewDetails.this, "Something went wrong. Try Again", Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private String customToString(String str){
+        str = str.toLowerCase();
+        String t = "";
+        for(String s:str.split("_")){
+            t = t+s.substring(0,1).toUpperCase()+s.substring(1)+" ";
+        }
+        return t;
     }
 }

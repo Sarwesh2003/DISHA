@@ -47,6 +47,17 @@
                 app:tint="@color/close"
                 android:src="@drawable/accurate"
                 app:rippleColor="@color/white"/>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/voiceAssistant"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:backgroundTint="@color/white"
+            app:layout_anchor="@id/bottom_sheet"
+            app:layout_anchorGravity="top|start"
+            android:layout_margin="10dp"
+            app:tint="@color/close"
+            android:src="@drawable/ic_voice"
+            app:rippleColor="@color/white"/>
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 

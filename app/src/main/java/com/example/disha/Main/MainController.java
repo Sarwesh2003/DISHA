@@ -10,9 +10,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Parcel;
-import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
@@ -20,52 +17,30 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
 
-import com.example.disha.AddPlace.PlaceInfo;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.Permission;
+import com.example.disha.AddPlace.PrivacyPolicy;
 import com.example.disha.R;
-import com.example.disha.Reviews.ActivityReview;
 import com.example.disha.Main.BottomSheet.CustomBottomSheet;
 import com.example.disha.locationModel.Location;
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AddressComponents;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
-import com.google.android.libraries.places.api.model.LocationRestriction;
-import com.google.android.libraries.places.api.model.OpeningHours;
-import com.google.android.libraries.places.api.model.PhotoMetadata;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.PlusCode;
-import com.google.android.libraries.places.api.model.RectangularBounds;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -86,164 +61,33 @@ public class MainController {
     Context context;
     View root;
     private Location location;
-    private FloatingActionButton refresh;
+    private FloatingActionButton refresh, voiceAssistant;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
     private AutoCompleteTextView search;
     private FirebaseUser user;
     private Bitmap profileImg;
     private ImageButton menu_btn, voice_btn;
-    private ActivityResultLauncher<Intent> launcher, audioLauncher;
+    private ActivityResultLauncher<Intent> launcher, audioLauncher, assistantLauncher;
     SpeechRecognizer speechRecognizer;
     TextToSpeech ttobj;
     boolean isListening = false;
 
     private AppCompatButton view_details_btn, directions_btn;
-    Place nashik = new Place() {
-        @Nullable
-        @Override
-        public Uri getWebsiteUri() {
-            return null;
-        }
 
-        @Nullable
-        @Override
-        public LatLng getLatLng() {
-            return new LatLng(19.9975, 73.7898);
-        }
-
-        @Nullable
-        @Override
-        public LatLngBounds getViewport() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public AddressComponents getAddressComponents() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public OpeningHours getOpeningHours() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Place.BusinessStatus getBusinessStatus() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public PlusCode getPlusCode() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Double getRating() {
-            return 5.0;
-        }
-
-        @Nullable
-        @Override
-        public Integer getIconBackgroundColor() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public Integer getPriceLevel() {
-            return 4;
-        }
-
-        @Nullable
-        @Override
-        public Integer getUserRatingsTotal() {
-            return 5;
-        }
-
-        @Nullable
-        @Override
-        public Integer getUtcOffsetMinutes() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public String getAddress() {
-            return "Humare Dilo Ma...";
-        }
-
-        @Nullable
-        @Override
-        public String getIconUrl() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public String getId() {
-            return "ChIJ50mPYcfqwjsRlURfE_FE0qI";
-        }
-
-        @Nullable
-        @Override
-        public String getName() {
-            return "Nashik";
-        }
-
-        @Nullable
-        @Override
-        public String getPhoneNumber() {
-            return "7709436123";
-        }
-
-        @Nullable
-        @Override
-        public List<String> getAttributions() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public List<PhotoMetadata> getPhotoMetadatas() {
-            return null;
-        }
-
-        @Nullable
-        @Override
-        public List<Place.Type> getTypes() {
-            return null;
-        }
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-
-        }
-    };
     private PlacesClient placeClient;
 
-    public MainController(Context context, View root, ActivityResultLauncher<Intent> launcher, ActivityResultLauncher<Intent> audiolauncher) {
+    public MainController(Context context, View root, ActivityResultLauncher<Intent> launcher, ActivityResultLauncher<Intent> audiolauncher, ActivityResultLauncher<Intent> assistantLauncher) {
         this.context = context;
         this.root = root;
         this.launcher = launcher;
         //Initializing PLaces API and DAO
         Places.initialize(context,"AIzaSyDWh2tZNTZKRJQQIs6pqspqEiX7f8mxl08");
         daoPlaceData = new DAOPlaceData();
-        location = new Location(context, R.id.map_fragment);
         user = FirebaseAuth.getInstance().getCurrentUser();
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(context);
         this.audioLauncher = audiolauncher;
-
+        this.assistantLauncher = assistantLauncher;
         placeClient = Places.createClient(context);
     }
     public void init(){
@@ -254,11 +98,15 @@ public class MainController {
         search = root.findViewById(R.id.searchEdit);
         menu_btn = root.findViewById(R.id.menu_btn);
         voice_btn = root.findViewById(R.id.voice);
-
+        voiceAssistant = root.findViewById(R.id.voiceAssistant);
         search.setFocusable(false);
         profileImg = drawableToBitmap(context.getDrawable(R.drawable.ic_profile));
         getPhoto();
-        speak();
+        Log.d("Myaddr", "You are on the main screen and your current address is"
+                + location.getCityStateCountry(location.getMyLocation()));
+        speak("You are on the main screen and your current address is"
+                + location.getCityStateCountry(location.getMyLocation()));
+
         menu_btn.setOnClickListener(v -> handleMenu());
 
         voice_btn.setOnClickListener(v -> {
@@ -267,6 +115,13 @@ public class MainController {
             i.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
             i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN");
             audioLauncher.launch(i);
+        });
+        voiceAssistant.setOnClickListener(v -> {
+            Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+            i.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+            i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN");
+            assistantLauncher.launch(i);
         });
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -277,8 +132,8 @@ public class MainController {
                 {
 
                     case R.id.add_place:
-                        Intent start_add_place = new Intent(context, PlaceInfo.class);
-                        context.startActivity(start_add_place);
+                        Intent start_privacy_policy = new Intent(context, PrivacyPolicy.class);
+                        context.startActivity(start_privacy_policy);
                         break;
                     case R.id.view_profile:
                         Toast.makeText(context, "View Profile is Clicked",Toast.LENGTH_SHORT).show();
@@ -313,7 +168,7 @@ public class MainController {
         refresh.setOnClickListener(v -> handleRefresh());
     }
 
-    public void speak(){
+    public void speak(String str){
         SharedPreferences settings = context.getSharedPreferences("Settings", 0);
         boolean silent = settings.getBoolean("audio", true);
         if(!silent)
@@ -325,12 +180,12 @@ public class MainController {
                 if(status != TextToSpeech.ERROR){
                     ttobj.setLanguage(Locale.ENGLISH);
                     ttobj.setSpeechRate(0.7f);
-                    ttobj.speak("You are on the main screen and your current address is"
-                            + location.getCityStateCountry(location.getMyLocation()), TextToSpeech.QUEUE_ADD,null);
+                    ttobj.speak(str, TextToSpeech.QUEUE_FLUSH,null);
                 }
             }
         });
     }
+
 
     private void handleRefresh() {
         location.RemoveAllMarkers();
@@ -464,4 +319,5 @@ public class MainController {
         this.sheet = sheet;
         this.location = location;
     }
+
 }

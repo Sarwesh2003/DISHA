@@ -145,7 +145,10 @@ public class CustomBottomSheet {
         if(flg){
             view.putExtra("PlaceFound", true);
             view.putExtra("PlaceName", place.getName());
+            view.putExtra("PlaceId", place.getId());
         }else{
+            view.putExtra("PlaceName", place.getName());
+            view.putExtra("PlaceId", place.getId());
             view.putExtra("PlaceFound", false);
         }
         context.startActivity(view);

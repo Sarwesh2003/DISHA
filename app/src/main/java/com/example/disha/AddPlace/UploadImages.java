@@ -6,6 +6,7 @@ import android.content.ClipData;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,6 +16,7 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.Toolbar;
@@ -25,6 +27,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +36,11 @@ import com.example.disha.Main.MainActivity;
 import com.example.disha.R;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.AddPlace.data.PlaceData;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.safetynet.SafetyNet;
+import com.google.android.gms.safetynet.SafetyNetApi;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -44,20 +52,23 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class UploadImages extends Fragment {
+public class UploadImages extends Fragment implements GoogleApiClient.ConnectionCallbacks {
 
 
     private static final int PICK_IMAGE_REQUEST = 22;
     View root;
     TextView title, step;
-    TextInputEditText mainImg;
-    ActivityResultLauncher<Intent> mainImgRes;
+    TextInputEditText mainImg, mainVid;
+    ActivityResultLauncher<Intent> mainImgRes, mainVidRes;
     private Uri mainImgFile;
-    private ImageButton mainImgBtn;
+    private ImageButton mainImgBtn, mainVidBtn;
     AppCompatButton submit,prev;
-    ArrayList<Uri> list;
+    ArrayList<Uri> list, vidList;
     HashMap<String,Uri> list1;
     int position = 0;
+    CheckBox recaptcha;
+    String sitekey;
+    GoogleApiClient googleApiClient;
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -87,7 +98,14 @@ public class UploadImages extends Fragment {
                     }
                 }
         );
+        mainVidRes = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+            Intent data = result.getData();
+            if(data.getData() != null)
+                vidList.add(data.getData());
+            mainVid.setText("Videos Selected: "+ vidList.size());
+        });
     }
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,110 +117,163 @@ public class UploadImages extends Fragment {
         submit = getActivity().findViewById(R.id.continueBtn);
         mainImgBtn = root.findViewById(R.id.mainImgbtn);
         mainImg = root.findViewById(R.id.mainImg);
+        mainVidBtn = root.findViewById(R.id.mainVidbtn);
+        mainVid = root.findViewById(R.id.mainVid);
         step = getActivity().findViewById(R.id.step);
         prev = getActivity().findViewById(R.id.prev);
+        recaptcha = root.findViewById(R.id.cb_recaptcha);
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
         toolbar.setNavigationOnClickListener(v -> {
             getActivity().onBackPressed();
         });
         list = new ArrayList<>();
+        vidList = new ArrayList<>();
         Initallize();
 
         mainImgBtn.setOnClickListener(v -> {
             openIntent(mainImgRes);
         });
-
+        mainVidBtn.setOnClickListener(v -> {
+            openVideoIntent(mainVidRes);
+        });
+        submit.setVisibility(View.GONE);
         Bundle dataBundle = this.getArguments();
         list1= new HashMap<>();
         submit.setOnClickListener(v -> {
-            ProgressDialog progressDialog
-                    = new ProgressDialog(getContext());
-            progressDialog.setTitle("Uploading Data...");
-            progressDialog.setCancelable(false);
-            progressDialog.show();
-            int ctr=0;
-            DAOPlaceData dao = new DAOPlaceData();
-            PlaceData placeData = getPlaceData(dataBundle);
-            dao.add(placeData).addOnSuccessListener(new OnSuccessListener<Void>() {
-                @Override
-                public void onSuccess(Void unused) {
-                    progressDialog.setTitle("Uploading Images");
-                }
-            });
-            if(list1.size() > 0){
-                if(list1.containsKey("RampsImg")){
-                    ctr++;
-                    progressDialog.setTitle("Uploading Image" + ctr);
-                    dao.addImg(list1.get("RampsImg"), placeData.getPlaceName(), "Facilities", "Ramp")
-                    .addOnSuccessListener(taskSnapshot -> {});
-                }
-                if(list1.containsKey("HandrailImg")){
-                    ctr++;
-                    progressDialog.setTitle("Uploading Image" + ctr);
-                    dao.addImg(list1.get("HandrailImg"), placeData.getPlaceName(), "Facilities", "Handrail")
-                            .addOnSuccessListener(taskSnapshot -> {
-                            });
-                }
-                if(list1.containsKey("brailleImg")){
-                    ctr++;
-                    progressDialog.setTitle("Uploading Image" + ctr);
-                    dao.addImg(list1.get("brailleImg"), placeData.getPlaceName(), "Facilities", "Braille")
-                            .addOnSuccessListener(taskSnapshot -> {
-
-                            });
-                }
-                if(list1.containsKey("toiletImg")){
-                    ctr++;
-                    progressDialog.setTitle("Uploading Image" + ctr);
-                    dao.addImg(list1.get("toiletImg"), placeData.getPlaceName(), "Facilities", "Toilet")
-                            .addOnSuccessListener(taskSnapshot -> {
-
-                            });
-                }
-                if(list1.containsKey("liftsImg")){
-                    ctr++;
-                    progressDialog.setTitle("Uploading Image" + ctr);
-                    dao.addImg(list1.get("liftsImg"), placeData.getPlaceName(), "Facilities", "Lifts")
-                            .addOnSuccessListener(taskSnapshot -> {
-                            });
-                }
-                if(list1.containsKey("wheelchairImg")){
-                    ctr++;
-                    progressDialog.setTitle("Uploading Image" + ctr);
-                    dao.addImg(list1.get("wheelchairImg"), placeData.getPlaceName(), "Facilities", "wheelchair")
-                            .addOnSuccessListener(taskSnapshot -> {
-
-                            });
-                }
-            }
-            progressDialog.setTitle("Uploading Display Images");
-            ctr = 0;
-            for(Uri filepath : list){
-                ctr++;
-                int finalCtr = ctr;
-                dao.addImg(filepath, placeData.getPlaceName(), "Display", "Disp"+ctr).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            if(recaptcha.isChecked()){
+                ProgressDialog progressDialog
+                        = new ProgressDialog(getContext());
+                progressDialog.setTitle("Uploading Data...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                int ctr=0;
+                DAOPlaceData dao = new DAOPlaceData();
+                PlaceData placeData = getPlaceData(dataBundle);
+                dao.add(placeData).addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        progressDialog.setTitle("Uploading Image "+ finalCtr);
-                    }
-                }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                        if (finalCtr == list.size()){
-                            progressDialog.dismiss();
-                            taskCompleted(true);
-                        }
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        taskCompleted(false);
+                    public void onSuccess(Void unused) {
+                        progressDialog.setTitle("Uploading Images");
                     }
                 });
+                if(list1.size() > 0){
+                    if(list1.containsKey("RampsImg")){
+                        ctr++;
+                        progressDialog.setTitle("Uploading Image" + ctr);
+                        dao.addImg(list1.get("RampsImg"), placeData.getPlaceName(), "Facilities", "Ramp")
+                                .addOnSuccessListener(taskSnapshot -> {});
+                    }
+                    if(list1.containsKey("HandrailImg")){
+                        ctr++;
+                        progressDialog.setTitle("Uploading Image" + ctr);
+                        dao.addImg(list1.get("HandrailImg"), placeData.getPlaceName(), "Facilities", "Handrail")
+                                .addOnSuccessListener(taskSnapshot -> {
+                                });
+                    }
+                    if(list1.containsKey("brailleImg")){
+                        ctr++;
+                        progressDialog.setTitle("Uploading Image" + ctr);
+                        dao.addImg(list1.get("brailleImg"), placeData.getPlaceName(), "Facilities", "Braille")
+                                .addOnSuccessListener(taskSnapshot -> {
+
+                                });
+                    }
+                    if(list1.containsKey("toiletImg")){
+                        ctr++;
+                        progressDialog.setTitle("Uploading Image" + ctr);
+                        dao.addImg(list1.get("toiletImg"), placeData.getPlaceName(), "Facilities", "Toilet")
+                                .addOnSuccessListener(taskSnapshot -> {
+
+                                });
+                    }
+                    if(list1.containsKey("liftsImg")){
+                        ctr++;
+                        progressDialog.setTitle("Uploading Image" + ctr);
+                        dao.addImg(list1.get("liftsImg"), placeData.getPlaceName(), "Facilities", "Lifts")
+                                .addOnSuccessListener(taskSnapshot -> {
+                                });
+                    }
+                    if(list1.containsKey("wheelchairImg")){
+                        ctr++;
+                        progressDialog.setTitle("Uploading Image" + ctr);
+                        dao.addImg(list1.get("wheelchairImg"), placeData.getPlaceName(), "Facilities", "wheelchair")
+                                .addOnSuccessListener(taskSnapshot -> {
+
+                                });
+                    }
+                }else{
+                    progressDialog.dismiss();
+                }
+                if(progressDialog.isShowing())
+                    progressDialog.setTitle("Uploading Display Images");
+                ctr = 0;
+                for(Uri filepath : list){
+                    ctr++;
+                    int finalCtr = ctr;
+                    dao.addImg(filepath, placeData.getPlaceName(), "Display", "Disp"+ctr).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            progressDialog.setTitle("Uploading Image "+ finalCtr);
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
+                            if (finalCtr == list.size()){
+                                progressDialog.dismiss();
+                                taskCompleted(true);
+                            }
+
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            taskCompleted(false);
+                        }
+                    });
+                }
+                if(progressDialog.isShowing())
+                    progressDialog.setTitle("Uploading Videos");
+                if(vidList.size() > 0){
+                    dao.addImg(vidList.get(0), placeData.getPlaceName(), "Videos", "Video1")
+                            .addOnSuccessListener(taskSnapshot -> {
+
+                            });
+                }
+
+            }else{
+                Toast.makeText(getContext(), "Please verify captcha", Toast.LENGTH_SHORT).show();
+            }
+        });
+        sitekey = "6LeL-qkhAAAAALPor0NblEn6O2enMkchM9CCTsWO";
+        googleApiClient = new GoogleApiClient.Builder(getActivity().getApplicationContext())
+        .addApi(SafetyNet.API).build();
+        googleApiClient.connect();
+        recaptcha.setOnClickListener(v -> {
+            if(recaptcha.isChecked()){
+                SafetyNet.SafetyNetApi.verifyWithRecaptcha(googleApiClient, sitekey)
+                        .setResultCallback(new ResultCallback<SafetyNetApi.RecaptchaTokenResult>() {
+                            @Override
+                            public void onResult(@NonNull SafetyNetApi.RecaptchaTokenResult recaptchaTokenResult) {
+                                Status status = recaptchaTokenResult.getStatus();
+                                if((status != null) && status.isSuccess()){
+                                    submit.setVisibility(View.VISIBLE);
+                                    recaptcha.setTextColor(Color.GREEN);
+                                }else{
+                                    Toast.makeText(getContext(), status.getStatusMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }else{
+                recaptcha.setTextColor(Color.BLACK);
             }
         });
         return root;
+    }
+
+    private void openVideoIntent(ActivityResultLauncher<Intent> mainVidRes) {
+        Intent intent = new Intent();
+        intent.setType("video/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        mainVidRes.launch(intent);
     }
 
     private void Initallize() {
@@ -277,5 +348,15 @@ public class UploadImages extends Fragment {
         if(dataBundle.get("wheelchairImg") != null)
             list1.put("wheelchairImg", Uri.parse(dataBundle.get("wheelchairImg").toString()));
         return placeData;
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 }

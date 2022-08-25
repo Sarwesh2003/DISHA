@@ -2,7 +2,9 @@ package com.example.disha.Main;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
@@ -96,6 +98,38 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
 
+    public ActivityResultLauncher<Intent> assistantLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == Activity.RESULT_OK) {
+                    if (result.getData() != null) {
+                        ArrayList<String> list = result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                        if (list.size() > 0) {
+                            String command = list.get(0);
+                            if(command.toLowerCase(Locale.ROOT).contains("search") && command.toLowerCase(Locale.ROOT).contains("place")){
+                                speak("Disha Says Okay, please spell place name to search when prompted");
+                                final Handler handler = new Handler();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                                        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                                        i.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+                                        i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN");
+                                        Audiolauncher.launch(i);
+                                    }
+                                }, 5000);
+                            }else if(command.toLowerCase(Locale.ROOT).contains("current") && command.toLowerCase(Locale.ROOT).contains("location")){
+                                Location loc = new Location(MainActivity.this, R.id.map_fragment);
+                                speak("You current location is "+loc.GetAddress(location.getMyLocation()));
+                            }
+                        }
+                    }
+                }else if(result.getResultCode() == AutocompleteActivity.RESULT_ERROR){
+                    Status status = Autocomplete.getStatusFromIntent(result.getData());
+                    Toast.makeText(getApplicationContext(),status.getStatusMessage(),Toast.LENGTH_LONG).show();
+                }
+            });
     private CustomBottomSheet sheet;
     private TextToSpeech ttobj;
     MainController controller;
@@ -106,14 +140,16 @@ public class MainActivity extends AppCompatActivity {
         root = LayoutInflater.from(MainActivity.this).inflate(R.layout.activity_main, null);
         setContentView(root);
 
-        controller = new MainController(MainActivity.this, root, launcher, Audiolauncher);
+        controller = new MainController(MainActivity.this, root, launcher, Audiolauncher, assistantLauncher);
         controller.checkUser();
         sheet = new CustomBottomSheet(root,MainActivity.this);
-        controller.init();
+
         placeClient = Places.createClient(MainActivity.this);
         location = new Location(MainActivity.this, R.id.map_fragment);
         location.CheckPrerequisite();
+
         controller.setSheet(sheet, location);
+        controller.init();
     }
 
     @Override
@@ -147,6 +183,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        controller.speak();
+        controller.speak("You are on the main screen and your current address is"
+                + location.getCityStateCountry(location.getMyLocation()));
+    }
+    public void speak(String str){
+        SharedPreferences settings = getSharedPreferences("Settings", 0);
+        boolean silent = settings.getBoolean("audio", true);
+        if(!silent)
+            return;
+        ttobj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+
+                if(status != TextToSpeech.ERROR){
+                    ttobj.setLanguage(Locale.ENGLISH);
+                    ttobj.setSpeechRate(0.7f);
+                    ttobj.speak(str, TextToSpeech.QUEUE_ADD,null);
+                }
+            }
+        });
+
     }
 }
