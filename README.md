@@ -11,6 +11,7 @@ Also, user can review a place.
 
 ![Main](https://user-images.githubusercontent.com/62764698/192109778-cf02c3bf-9c58-4494-827b-f3498e017ca6.jpeg)
 ![Main2](https://user-images.githubusercontent.com/62764698/192109779-80a224d0-91d5-4b92-999c-9c8afcb3f7af.jpeg)
+<br>
 ![Details](https://user-images.githubusercontent.com/62764698/192109784-805a09ff-0077-48ca-9e38-f64a4fb28078.jpeg)
 
 ![Review](https://user-images.githubusercontent.com/62764698/192109786-c85a7c9a-95d2-40fb-be25-c3b21f89b904.jpeg)
