@@ -5,6 +5,15 @@
 Application focuses on providing information about facilities available at particular location to specially abled people.<br/>
 We can add public, private, government places.
 Also, user can review a place.
+
+<h1>Steps</h1>
+<b>Step 1: Go to ![Drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)</b>
+<b>Step 2: Download the APK.</b>
+<b>Step 3: Install APK</b>
+<b>Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place</b>
+<b>Step 5: Click on Details, Reviews, Photos etc.</b>
+<h1>For Detailed Demo Visit ![Drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)</h1>
+
 <h3>Any contribution will be appreciated.</h3>
 
 <h1>Screen Shots</h1>
