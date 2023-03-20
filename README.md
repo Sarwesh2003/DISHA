@@ -7,7 +7,7 @@ We can add public, private, government places.
 Also, user can review a place.
 
 <h1>Steps</h1>
-<b>Step 1: Go to </b> [drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)<br>
+<b>Step 1: Go to [Drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)</b><br>
 <b>Step 2: Download the APK.</b><br>
 <b>Step 3: Install APK</b><br>
 <b>Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place</b><br>
