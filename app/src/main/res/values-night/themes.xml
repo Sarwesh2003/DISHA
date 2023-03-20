@@ -39,4 +39,8 @@
         <item name="colorControlNormal">@color/grey_60</item>
         <item name="colorControlActivated">@color/yellow_600</item>
     </style>
+    <style name="animation">
+        <item name="android:windowEnterAnimation">@android:anim/fade_in</item>
+        <item name="android:windowExitAnimation">@android:anim/fade_out</item>
+    </style>
 </resources>

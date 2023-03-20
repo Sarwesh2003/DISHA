@@ -40,6 +40,7 @@ public class PlaceDetails extends Fragment {
     AppCompatButton cont, prev;
     TextView title, step;
     ImageButton btn;
+    Bundle data;
     public ActivityResultLauncher<Intent> launcher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -56,6 +57,9 @@ public class PlaceDetails extends Fragment {
 
     private void ShowData(Place place) {
         placeName.setText(place.getName());
+        data.putString("Lat", String.valueOf(place.getLatLng().latitude));
+        data.putString("Lang", String.valueOf(place.getLatLng().longitude));
+        data.putString("Address", place.getAddress());
     }
 
     public PlaceDetails() {
@@ -68,6 +72,7 @@ public class PlaceDetails extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_place_details, container, false);
+        data = new Bundle();
         btype = (AutoCompleteTextView) v.findViewById(R.id.btype);
         infratype = (AutoCompleteTextView) v.findViewById(R.id.infraType);
         cont = getActivity().findViewById(R.id.continueBtn);
@@ -81,21 +86,30 @@ public class PlaceDetails extends Fragment {
         initializeAdapters();
 
         cont.setOnClickListener(l -> {
-            Bundle data = new Bundle();
+            if(placeName.getText().toString().isEmpty() || desc.getText().toString().isEmpty() ||
+            pno.getText().toString().isEmpty() || btype.getText().toString().isEmpty() || infratype.getText().toString().isEmpty()){
+                TextView warn = v.findViewById(R.id.warn);
+                warn.setText("* All fields are mandatory.");
+                return;
+            }
+
             data.putString("PlaceName",placeName.getText().toString());
             data.putString("Desc",desc.getText().toString());
             data.putString("PhNo",pno.getText().toString());
             data.putString("PType",btype.getText().toString());
             data.putString("InfraType",infratype.getText().toString());
 
-            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+
+            FragmentManager fragmentManager = this.getParentFragmentManager();
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
             fragmentTransaction.setCustomAnimations(R.anim.slide_up,R.anim.slide_down);
             fragmentTransaction.addToBackStack(null);
-            MapFragment map = new MapFragment();
-            map.setArguments(data);
-            fragmentTransaction.replace(R.id.fragment_form_container,map).commit();
+            Ramp q1 = new Ramp();
+            q1.setArguments(data);
+            fragmentTransaction.replace(R.id.fragment_form_container,q1).commit();
+
             prev.setEnabled(true);
+
         });
         placeName.setEnabled(false);
         btn.setOnClickListener(t -> {

@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.disha.AddPlace.Wheelchair;
 import com.example.disha.R;
@@ -24,14 +25,14 @@ public class ReviewLifts extends Fragment {
     AutoCompleteTextView lift;
     TextInputEditText desc_lift;
     AppCompatButton prev, submit;
-
+    View root;
     public ReviewLifts() {
 
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_review_lifts, container, false);
+        root = inflater.inflate(R.layout.fragment_review_lifts, container, false);
         lift = root.findViewById(R.id.lifts);
         desc_lift = root.findViewById(R.id.descLifts);
         prev = getActivity().findViewById(R.id.prev);
@@ -52,6 +53,11 @@ public class ReviewLifts extends Fragment {
         lift.setAdapter(adapterLift);
     }
     private void sendData(){
+        if(lift.getText().toString().isEmpty() || desc_lift.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("lifts", lift.getText().toString());

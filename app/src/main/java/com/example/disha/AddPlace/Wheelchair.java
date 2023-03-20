@@ -38,6 +38,7 @@ public class Wheelchair extends Fragment {
     AppCompatButton prev, submit;
     TextView step, title;
     LinearLayout wheelchairImgLayout;
+    View root;
     ActivityResultLauncher<Intent> wheelchairRes;
     private Uri wheelchairFile;
     ArrayList<Uri> list = new ArrayList<>();
@@ -66,7 +67,7 @@ public class Wheelchair extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_wheelchair, container, false);
+         root = inflater.inflate(R.layout.fragment_wheelchair, container, false);
         wheelchair = root.findViewById(R.id.wheelchair);
         btn_img = root.findViewById(R.id.wheelchairbtn);
         desc_wheelchair = root.findViewById(R.id.descWheelchair);
@@ -95,6 +96,11 @@ public class Wheelchair extends Fragment {
     }
 
     private void sendData(){
+        if(wheelchair.getText().toString().isEmpty() || desc_wheelchair.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("wheelchair", wheelchair.getText().toString());

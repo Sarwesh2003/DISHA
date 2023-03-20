@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.example.disha.AddPlace.Toilet;
 import com.example.disha.R;
@@ -23,6 +24,7 @@ public class ReviewBraille extends Fragment {
     AutoCompleteTextView braille;
     TextInputEditText desc_braille;
     AppCompatButton prev, submit;
+    View root;
     public ReviewBraille() {
 
     }
@@ -30,7 +32,7 @@ public class ReviewBraille extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_review_braille, container, false);
+        root = inflater.inflate(R.layout.fragment_review_braille, container, false);
         braille = root.findViewById(R.id.braille);
         desc_braille = root.findViewById(R.id.desc_braille);
         prev = getActivity().findViewById(R.id.prev);
@@ -52,6 +54,11 @@ public class ReviewBraille extends Fragment {
         braille.setAdapter(adapter);
     }
     private void sendData(){
+        if(braille.getText().toString().isEmpty() || desc_braille.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("braille", braille.getText().toString());

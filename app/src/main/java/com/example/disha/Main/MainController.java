@@ -1,5 +1,6 @@
 package com.example.disha.Main;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -13,6 +14,8 @@ import android.os.AsyncTask;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.speech.tts.TextToSpeech;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,10 +33,14 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.example.disha.AddPlace.data.DAOPlaceData;
 import com.example.disha.Permission;
 import com.example.disha.AddPlace.PrivacyPolicy;
+import com.example.disha.Profile.CreateProfile;
+import com.example.disha.Profile.DAOProfile;
+import com.example.disha.Profile.ViewProfile;
 import com.example.disha.R;
 import com.example.disha.Main.BottomSheet.CustomBottomSheet;
 import com.example.disha.locationModel.Location;
 import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -47,9 +54,15 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -71,8 +84,9 @@ public class MainController {
     private ActivityResultLauncher<Intent> launcher, audioLauncher, assistantLauncher;
     SpeechRecognizer speechRecognizer;
     TextToSpeech ttobj;
+    String imgUri;
     boolean isListening = false;
-
+    ProgressDialog progressDialog;
     private AppCompatButton view_details_btn, directions_btn;
 
     private PlacesClient placeClient;
@@ -101,7 +115,7 @@ public class MainController {
         voiceAssistant = root.findViewById(R.id.voiceAssistant);
         search.setFocusable(false);
         profileImg = drawableToBitmap(context.getDrawable(R.drawable.ic_profile));
-        getPhoto();
+
         Log.d("Myaddr", "You are on the main screen and your current address is"
                 + location.getCityStateCountry(location.getMyLocation()));
         speak("You are on the main screen and your current address is"
@@ -135,8 +149,13 @@ public class MainController {
                         Intent start_privacy_policy = new Intent(context, PrivacyPolicy.class);
                         context.startActivity(start_privacy_policy);
                         break;
+                    case R.id.create_profile:
+                        Intent start_create_profile = new Intent(context, CreateProfile.class);
+                        context.startActivity(start_create_profile);
+                        break;
                     case R.id.view_profile:
-                        Toast.makeText(context, "View Profile is Clicked",Toast.LENGTH_SHORT).show();
+                        Intent start_view_profile = new Intent(context, ViewProfile.class);
+                        context.startActivity(start_view_profile);
                         break;
                     case R.id.settings:
                         Intent start_settings = new Intent(context, Settings.class);
@@ -164,8 +183,60 @@ public class MainController {
                 return true;
             }
         });
-        search.setOnClickListener(v -> handleSearch());
+        search.setOnClickListener(v -> {
+            handleSearch();
+        });
         refresh.setOnClickListener(v -> handleRefresh());
+        addPointers("wheelchair");
+    }
+
+    private void addPointers(String facility) {
+        if(facility.equals("wheelchair")){
+            progressDialog
+                    = new ProgressDialog(context);
+            progressDialog.setTitle("Collecting Data...");
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+            HashMap<LatLng, String> latlng = new HashMap<>();
+            HashMap<LatLng, String> tlt = new HashMap<>();
+            daoPlaceData.get().addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists()){
+                        for(DataSnapshot s : snapshot.getChildren()){
+//                            for(DataSnapshot sub : s.getChildren()){
+                                if(s.child("wheelchair").getValue(String.class).equals("Available")){
+                                    LatLng l = new LatLng(Double.parseDouble(s.child("lat").getValue(String.class)),
+                                            Double.parseDouble(s.child("lang").getValue(String.class)));
+                                    if(!latlng.containsKey(l)){
+                                        latlng.put(l, s.child("placeName").getValue(String.class));
+                                    }
+//                              }
+                                }
+//                                if(s.child("toilet").getValue(String.class).equals("Available")){
+//                                    LatLng l = new LatLng(Double.parseDouble(s.child("lat").getValue(String.class)),
+//                                            Double.parseDouble(s.child("lang").getValue(String.class)));
+//                                    if(!tlt.containsKey(l)){
+//                                        tlt.put(l, s.child("placeName").getValue(String.class));
+//                                    }
+//                                }
+                        }
+                        MarkLocation(latlng, "Wheelchair");
+                        MarkLocation(tlt, "Toilet");
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+    }
+
+    private void MarkLocation(HashMap<LatLng, String> latlng, String msg) {
+        location.addMarkersAll(latlng, msg);
+        progressDialog.dismiss();
     }
 
     public void speak(String str){
@@ -219,10 +290,10 @@ public class MainController {
         TextView user_name = navigationView.findViewById(R.id.user_name);
         TextView gmail = navigationView.findViewById(R.id.gmail);
         CircleImageView img = navigationView.findViewById(R.id.profilepic);
+//        getPhoto();
         if(finalUser != null) {
             String name = finalUser.getDisplayName();
             String email = finalUser.getEmail();
-            String imgUri = String.valueOf(user.getPhotoUrl());
             if (name == null || name.isEmpty()) {
                 user_name.setText(finalUser.getPhoneNumber());
             } else {
@@ -234,6 +305,21 @@ public class MainController {
             } else {
                 gmail.setText(finalUser.getEmail());
             }
+            DAOProfile dao = new DAOProfile();
+            dao.getReference().child(user.getUid()).addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.exists() && snapshot.getChildrenCount() > 0){
+                        imgUri = snapshot.child("image").getValue(String.class);
+                        Picasso.get().load(imgUri).into(img);
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
             img.setImageBitmap(profileImg);
         }
     }
@@ -247,8 +333,22 @@ public class MainController {
         }
     }
     private void getPhoto(){
+        DAOProfile dao = new DAOProfile();
+        dao.getReference().child(user.getUid()).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists() && snapshot.getChildrenCount() > 0){
+                    imgUri = snapshot.child("image").getValue(String.class);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         new DownloadImageFromInternet(profileImg)
-                .execute(String.valueOf(user.getPhotoUrl()));
+                .execute(String.valueOf(imgUri));
     }
 
 

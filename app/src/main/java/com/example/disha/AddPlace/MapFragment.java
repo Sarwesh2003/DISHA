@@ -69,9 +69,7 @@ public class MapFragment extends Fragment {
         title = getActivity().findViewById(R.id.tit);
         step = getActivity().findViewById(R.id.step);
         Toolbar toolbar = getActivity().findViewById(R.id.toolbar);
-        toolbar.setNavigationOnClickListener(n -> {
-            getActivity().onBackPressed();
-        });
+
         prev = getActivity().findViewById(R.id.prev);
         step.setText("Step: 02");
         title.setText("Select Location");
@@ -84,7 +82,6 @@ public class MapFragment extends Fragment {
             LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
             AddMarkerToPos(latLng, googleMap);
         }));
-//        assert data_bundle != null;
 
         submit.setOnClickListener(c -> {
             getAddress(data);

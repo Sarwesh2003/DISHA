@@ -79,6 +79,11 @@ public class ReviewFragment1 extends Fragment implements RatingBar.OnRatingBarCh
     }
 
     private void SubmitData() {
+        if(placeName.getText().toString().isEmpty() || date.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         getData();
 //        DAOReview dao = new DAOReview();
 //        Review reviewData = new Review(data.get(0), data.get(1), data.get(2), data.get(3), data.get(4));

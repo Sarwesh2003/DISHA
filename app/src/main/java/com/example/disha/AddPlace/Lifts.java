@@ -40,6 +40,7 @@ public class Lifts extends Fragment {
     ActivityResultLauncher<Intent> liftsRes;
     private Uri liftsFile;
     ArrayList<Uri> list = new ArrayList<>();
+    View root;
     public Lifts() {
         // Required empty public constructor
     }
@@ -66,7 +67,7 @@ public class Lifts extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_lifts, container, false);
+        root = inflater.inflate(R.layout.fragment_lifts, container, false);
         lift = root.findViewById(R.id.lifts);
         btn_img = root.findViewById(R.id.liftsbtn);
         desc_lift = root.findViewById(R.id.descLifts);
@@ -112,6 +113,11 @@ public class Lifts extends Fragment {
         });
     }
     private void sendData(){
+        if(lift.getText().toString().isEmpty() || desc_lift.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("lifts", lift.getText().toString());

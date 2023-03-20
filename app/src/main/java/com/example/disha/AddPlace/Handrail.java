@@ -40,6 +40,7 @@ public class Handrail extends Fragment {
     LinearLayout handrailImgLayout;
     ActivityResultLauncher<Intent> handrailRes;
     private Uri handrailFile;
+    View root;
     ArrayList<Uri> list = new ArrayList<>();
     public Handrail() {
         // Required empty public constructor
@@ -66,7 +67,7 @@ public class Handrail extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_handrail, container, false);
+         root = inflater.inflate(R.layout.fragment_handrail, container, false);
         handrail = root.findViewById(R.id.handrail);
         btn_img = root.findViewById(R.id.handrailbtn);
         desc_handrail = root.findViewById(R.id.desc_facility_handrail);
@@ -112,6 +113,11 @@ public class Handrail extends Fragment {
         });
     }
     private void sendData(){
+        if(handrail.getText().toString().isEmpty() || desc_handrail.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("handrail", handrail.getText().toString());

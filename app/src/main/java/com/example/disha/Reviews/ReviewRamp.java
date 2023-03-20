@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.example.disha.AddPlace.Handrail;
 import com.example.disha.R;
@@ -22,6 +23,7 @@ public class ReviewRamp extends Fragment {
     AutoCompleteTextView ramp;
     TextInputEditText desc;
     AppCompatButton prev, submit;
+    View root;
     public ReviewRamp() {
     }
 
@@ -29,7 +31,7 @@ public class ReviewRamp extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View root = inflater.inflate(R.layout.fragment_review_ramp, container, false);
+        root = inflater.inflate(R.layout.fragment_review_ramp, container, false);
         ramp = root.findViewById(R.id.ramps);
         desc = root.findViewById(R.id.descRamp);
         prev = getActivity().findViewById(R.id.prev);
@@ -46,6 +48,11 @@ public class ReviewRamp extends Fragment {
         return root;
     }
     private void sendData() {
+        if(ramp.getText().toString().isEmpty() || desc.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("ramp", ramp.getText().toString());

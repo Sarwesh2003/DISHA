@@ -39,6 +39,7 @@ public class Toilet extends Fragment {
     LinearLayout toiletImgLayout;
     ActivityResultLauncher<Intent> toiletRes;
     private Uri toiletFile;
+    View root;
     ArrayList<Uri> list = new ArrayList<>();
     public Toilet() {
         // Required empty public constructor
@@ -63,7 +64,7 @@ public class Toilet extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_toilet, container, false);
+        root = inflater.inflate(R.layout.fragment_toilet, container, false);
         toilet = root.findViewById(R.id.toilet);
         btn_img = root.findViewById(R.id.toiletbtn);
         desc_toilet = root.findViewById(R.id.descToilet);
@@ -109,6 +110,11 @@ public class Toilet extends Fragment {
         });
     }
     private void sendData(){
+        if(toilet.getText().toString().isEmpty() || desc_toilet.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("toilet", toilet.getText().toString());

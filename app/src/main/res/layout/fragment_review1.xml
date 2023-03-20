@@ -130,6 +130,15 @@
                         android:src="@drawable/star1" />
                 </LinearLayout>
             </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/warn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                android:textColor="@color/quantum_vanillaredA700"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>

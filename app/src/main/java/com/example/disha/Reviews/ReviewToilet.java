@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.example.disha.AddPlace.Lifts;
 import com.example.disha.R;
@@ -22,12 +23,13 @@ public class ReviewToilet extends Fragment {
     AutoCompleteTextView toilet;
     TextInputEditText desc_toilet, ntoilet;
     AppCompatButton prev, submit;
+    View root;
     public ReviewToilet() {
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_review_toilet, container, false);
+        root = inflater.inflate(R.layout.fragment_review_toilet, container, false);
         toilet = root.findViewById(R.id.toilet);
         desc_toilet = root.findViewById(R.id.descToilet);
         ntoilet = root.findViewById(R.id.toiletsNo);
@@ -49,6 +51,11 @@ public class ReviewToilet extends Fragment {
         toilet.setAdapter(adapter);
     }
     private void sendData(){
+        if(toilet.getText().toString().isEmpty() || desc_toilet.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("toilet", toilet.getText().toString());

@@ -12,10 +12,15 @@
     <item
         android:title="Profile">
         <menu>
+
             <item
                 android:id="@+id/view_profile"
                 android:icon="@drawable/ic_person"
                 android:title="View Profile"/>
+            <item
+                android:id="@+id/create_profile"
+                android:icon="@drawable/ic_create_profile"
+                android:title="Create Profile"/>
             <item
                 android:id="@+id/settings"
                 android:icon="@drawable/ic_settings"

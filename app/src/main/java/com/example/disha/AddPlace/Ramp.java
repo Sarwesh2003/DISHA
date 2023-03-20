@@ -98,6 +98,11 @@ public class Ramp extends Fragment {
     }
 
     private void sendData() {
+        if(ramp.getText().toString().isEmpty() || desc.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("ramp", ramp.getText().toString());

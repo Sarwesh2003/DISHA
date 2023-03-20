@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.TextView;
 
 import com.example.disha.AddPlace.Braille;
 import com.example.disha.R;
@@ -22,6 +23,7 @@ public class ReviewHandrail extends Fragment {
     AutoCompleteTextView handrail;
     TextInputEditText desc_handrail;
     AppCompatButton prev, submit;
+    View root;
     public ReviewHandrail() {
 
     }
@@ -29,7 +31,7 @@ public class ReviewHandrail extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View root = inflater.inflate(R.layout.fragment_review_handrail, container, false);
+        root = inflater.inflate(R.layout.fragment_review_handrail, container, false);
         handrail = root.findViewById(R.id.handrail);
         desc_handrail = root.findViewById(R.id.desc_facility_handrail);
         prev = getActivity().findViewById(R.id.prev);
@@ -52,6 +54,11 @@ public class ReviewHandrail extends Fragment {
         handrail.setAdapter(adapter);
     }
     private void sendData(){
+        if(handrail.getText().toString().isEmpty() || desc_handrail.getText().toString().isEmpty()){
+            TextView warn = root.findViewById(R.id.warn);
+            warn.setText("* All fields are mandatory.");
+            return;
+        }
         Bundle data_bundle = this.getArguments();
         if (data_bundle != null) {
             data_bundle.putString("handrail", handrail.getText().toString());

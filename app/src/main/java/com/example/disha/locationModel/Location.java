@@ -37,6 +37,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -114,7 +116,6 @@ public class Location {
             options = new MarkerOptions().position(latLng)
                     .title("Happy Journey");
         }
-
 
         mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
         marker = mGoogleMap.addMarker(options);
@@ -242,4 +243,28 @@ public class Location {
         return myLocation;
     }
 
+    public void addMarkersAll(HashMap<LatLng,String> latlng, String msg) {
+        MarkerOptions options;
+        if(msg.equals("Wheelchair")){
+            for(LatLng ltlng : latlng.keySet()){
+                options = new MarkerOptions().position(ltlng)
+                        .title(latlng.get(ltlng)).icon(BitmapFromVector(context,R.drawable.ic_whl));
+
+//            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                if(mGoogleMap != null)
+                    marker = mGoogleMap.addMarker(options);
+            }
+        }else{
+            for(LatLng ltlng : latlng.keySet()){
+                options = new MarkerOptions().position(ltlng)
+                        .title(latlng.get(ltlng)).icon(BitmapFromVector(context,R.drawable.ic_tlt));
+
+//            mGoogleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                marker = mGoogleMap.addMarker(options);
+        }
+
+
+
+    }
+}
 }

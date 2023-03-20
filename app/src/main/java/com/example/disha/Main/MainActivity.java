@@ -1,8 +1,13 @@
 package com.example.disha.Main;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.RecognizerIntent;
@@ -17,6 +22,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.disha.Profile.ViewProfile;
 import com.example.disha.R;
 import com.example.disha.Main.BottomSheet.CustomBottomSheet;
 import com.example.disha.locationModel.Location;
@@ -38,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity {
     Location location;
@@ -122,6 +129,9 @@ public class MainActivity extends AppCompatActivity {
                             }else if(command.toLowerCase(Locale.ROOT).contains("current") && command.toLowerCase(Locale.ROOT).contains("location")){
                                 Location loc = new Location(MainActivity.this, R.id.map_fragment);
                                 speak("You current location is "+loc.GetAddress(location.getMyLocation()));
+                            }else if(command.toLowerCase(Locale.ROOT).contains("my") || command.toLowerCase(Locale.ROOT).contains("qr")){
+                                Intent start_view_profile = new Intent(MainActivity.this, ViewProfile.class);
+                                startActivity(start_view_profile);
                             }
                         }
                     }
@@ -133,7 +143,10 @@ public class MainActivity extends AppCompatActivity {
     private CustomBottomSheet sheet;
     private TextToSpeech ttobj;
     MainController controller;
-
+    private SensorManager mSensorManager;
+    private float mAccel;
+    private float mAccelCurrent;
+    private float mAccelLast;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -150,8 +163,35 @@ public class MainActivity extends AppCompatActivity {
 
         controller.setSheet(sheet, location);
         controller.init();
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        Objects.requireNonNull(mSensorManager).registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        mAccel = 10f;
+        mAccelCurrent = SensorManager.GRAVITY_EARTH;
+        mAccelLast = SensorManager.GRAVITY_EARTH;
     }
-
+    private final SensorEventListener mSensorListener = new SensorEventListener() {
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            float x = event.values[0];
+            float y = event.values[1];
+            float z = event.values[2];
+            mAccelLast = mAccelCurrent;
+            mAccelCurrent = (float) Math.sqrt((double) (x * x + y * y + z * z));
+            float delta = mAccelCurrent - mAccelLast;
+            mAccel = mAccel * 0.9f + delta;
+            if (mAccel > 12) {
+                Intent i = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                i.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+                i.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "en-IN");
+                assistantLauncher.launch(i);
+            }
+        }
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        }
+    };
     @Override
     public void onBackPressed()
     {
@@ -203,5 +243,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+    @Override
+    protected void onResume() {
+        mSensorManager.registerListener(mSensorListener, mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
+                SensorManager.SENSOR_DELAY_NORMAL);
+        super.onResume();
+    }
+    @Override
+    protected void onPause() {
+        mSensorManager.unregisterListener(mSensorListener);
+        super.onPause();
     }
 }

@@ -140,6 +140,13 @@ public class UploadImages extends Fragment implements GoogleApiClient.Connection
         Bundle dataBundle = this.getArguments();
         list1= new HashMap<>();
         submit.setOnClickListener(v -> {
+            if(list.size() > 7){
+                TextView warn = root.findViewById(R.id.warn);
+                warn.setText("* Only 7 images are allowed.");
+                list.clear();
+                mainImg.setText("");
+                return;
+            }
             if(recaptcha.isChecked()){
                 ProgressDialog progressDialog
                         = new ProgressDialog(getContext());
@@ -200,9 +207,8 @@ public class UploadImages extends Fragment implements GoogleApiClient.Connection
 
                                 });
                     }
-                }else{
-                    progressDialog.dismiss();
                 }
+
                 if(progressDialog.isShowing())
                     progressDialog.setTitle("Uploading Display Images");
                 ctr = 0;
@@ -235,8 +241,10 @@ public class UploadImages extends Fragment implements GoogleApiClient.Connection
                 if(vidList.size() > 0){
                     dao.addImg(vidList.get(0), placeData.getPlaceName(), "Videos", "Video1")
                             .addOnSuccessListener(taskSnapshot -> {
-
+                                progressDialog.dismiss();
                             });
+                }else{
+                    progressDialog.dismiss();
                 }
 
             }else{
