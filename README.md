@@ -5,10 +5,10 @@
 Application focuses on providing information about facilities available at particular location to specially abled people.<br/>
 We can add public, private, government places.
 Also, user can review a place.
-[Drive](https://github.com/Sarwesh2003/DISHA/blob/master/README.md)
 <h1>Steps</h1>
-<b>Step 1: Go to </b> [Drive](https://github.com/Sarwesh2003/DISHA/blob/master/README.md)
-  <br>
+<b>Step 1: Go to 
+  [Drive](https://github.com/Sarwesh2003/DISHA/blob/master/README.md)
+</b><br>
 <b>Step 2: Download the APK.</b><br>
 <b>Step 3: Install APK</b><br>
 <b>Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place</b><br>
