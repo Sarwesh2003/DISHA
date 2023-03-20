@@ -1,20 +1,27 @@
+
 # DISHA
-<h1>DISHA: A Facility Locator for Specially Abled People</h1>
-<h2>All rights are reserved.</h2>
-
-Application focuses on providing information about facilities available at particular location to specially abled people.<br/>
-We can add public, private, government places.
+# DISHA: A Facility Locator for Specially Abled People
+## All Rights Reserved
+Application focuses on providing information about facilities available at particular location to specially abled people. We can add public, private, government places.
 Also, user can review a place.
-<h1>Steps</h1>
-Step 1: Go to
-[Drive](https://github.com/Sarwesh2003/DISHA/blob/master/README.md)
-Step 2: Download the APK.
-Step 3: Install APK
-Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place
-Step 5: Click on Details, Reviews, Photos etc.</b><br>
-<h1>For Detailed Demo Visit [drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)</h1><br>
 
-<h3>Any contribution will be appreciated.</h3>
+
+## Steps
+Step 1: Go To [Drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)
+
+
+Step 2: Download the APK.
+
+Step 3: Install APK
+
+Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place
+
+Step 5: Click on Details, Reviews, Photos etc
+
+For Detailed Demo Visit [Drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)
+
+
+## Any Contibutions will be heavily appreciated
 
 <h1>Screen Shots</h1>
 
