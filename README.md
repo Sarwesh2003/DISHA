@@ -6,13 +6,12 @@ Application focuses on providing information about facilities available at parti
 We can add public, private, government places.
 Also, user can review a place.
 <h1>Steps</h1>
-<b>Step 1: Go to </b>
-  [Drive](https://github.com/Sarwesh2003/DISHA/blob/master/README.md)
-  <br>
-<b>Step 2: Download the APK.</b><br>
-<b>Step 3: Install APK</b><br>
-<b>Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place</b><br>
-<b>Step 5: Click on Details, Reviews, Photos etc.</b><br>
+Step 1: Go to
+[Drive](https://github.com/Sarwesh2003/DISHA/blob/master/README.md)
+Step 2: Download the APK.
+Step 3: Install APK
+Step 4: Login and start using the app by searching places. For testing you can search "The Pavillion" as place
+Step 5: Click on Details, Reviews, Photos etc.</b><br>
 <h1>For Detailed Demo Visit [drive](https://drive.google.com/file/d/1igKIbZYxW4ylAsxGqUWDiW58gKq8uxI3/view)</h1><br>
 
 <h3>Any contribution will be appreciated.</h3>
